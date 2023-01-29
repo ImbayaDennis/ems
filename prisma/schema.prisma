@@ -35,6 +35,9 @@ model LeaveApproved {
 
 model Employees {
     id            String @id
+    employee_id   String?
+    name          String?
+    email_address String?
 }
 
 // Necessary for Next auth
