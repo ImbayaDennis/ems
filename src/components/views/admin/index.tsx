@@ -5,9 +5,8 @@ import ListItemCard from '../../common/ListItemCard';
 import MetricsCard from "../../common/MetricsCard";
 import Layout from "../../layout/Layout";
 
-type Props = {};
 
-const AdminHomePage = (props: Props) => {
+const AdminHomePage = () => {
   const{data:session} = useSession();
   return (
     <>

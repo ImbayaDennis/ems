@@ -1,9 +1,9 @@
 import { signIn, useSession } from "next-auth/react";
 import React from "react";
 
-type Props = {};
 
-const AuthRedirect = ({}: Props) => {
+
+const AuthRedirect = () => {
   const { data: session } = useSession();
 
   if (!session) {

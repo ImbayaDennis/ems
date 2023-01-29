@@ -2,11 +2,11 @@ import Link from "next/link";
 import React from "react";
 import { AdminLinks } from "../../assets/constants";
 
-type Props = {};
+
 
 const ListItems = [1, 2, 3, 4];
 
-const ListItemCard = (props: Props) => {
+const ListItemCard = () => {
   return (
     <div className="my-4 flex h-2/5 w-full min-w-[24rem] max-w-lg flex-col items-center justify-center rounded-lg bg-slate-300 p-4 shadow-md  dark:bg-slate-600 sm:w-2/5">
       <table className="my-2 h-full w-full overflow-x-scroll scrollbar-thin">

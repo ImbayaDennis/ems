@@ -3,9 +3,7 @@ import React from "react";
 import AuthRedirect from "../components/common/AuthRedirect";
 import LeaveRequestMngr from "../components/views/admin/LeaveRequestManager";
 
-type Props = {};
-
-const LeaveRequestManager = (props: Props) => {
+const LeaveRequestManager = () => {
   const { data: session } = useSession();
 
   if(!session){

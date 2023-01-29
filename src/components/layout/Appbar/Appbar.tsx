@@ -17,7 +17,7 @@ function Appbar({signIn, signOut, isAuth, imgUrl}: Props) {
       <meta name="description" content="Custom Content Management System" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <header className='w-screen h-16 px-4 text-gray-700 dark:text-gray-400 bg-gray-300 dark:bg-gray-900 flex justify-between items-center shadow-md'>
+    <header className='w-screen h-12 px-4 text-gray-700 dark:text-gray-400 bg-gray-300 dark:bg-gray-900 flex justify-between items-center shadow-md'>
       <div className="">
         LOGO
       </div>

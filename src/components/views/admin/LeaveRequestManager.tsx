@@ -1,8 +1,7 @@
 import React from 'react'
 
-type Props = {}
 
-const LeaveRequestManager = (props: Props) => {
+const LeaveRequestManager = () => {
   return (
     <div>LeaveRequestManager</div>
   )
