@@ -1,5 +1,4 @@
 import { useSession } from "next-auth/react";
-import Head from "next/head";
 import React from "react";
 import MetricsCard from "../../common/MetricsCard";
 

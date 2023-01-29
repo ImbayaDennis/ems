@@ -1,9 +1,7 @@
 import { useSession } from 'next-auth/react';
-import Head from 'next/head'
 import React from 'react'
 import ListItemCard from '../../common/ListItemCard';
 import MetricsCard from "../../common/MetricsCard";
-import Layout from "../../layout/Layout";
 
 
 const AdminHomePage = () => {
