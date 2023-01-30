@@ -10,7 +10,7 @@ const ListItemCard = () => {
   return (
     <div className="my-4 flex h-2/5 w-full min-w-[24rem] max-w-lg flex-col items-center justify-center rounded-lg bg-slate-300 p-4 shadow-md  dark:bg-slate-600 sm:w-2/5">
       <table className="my-2 h-full w-full overflow-x-scroll scrollbar-thin">
-        <thead className="text-center"><h2 className="text-2xl">Leave Requests</h2></thead>
+        <thead className="text-center text-2xl">Leave Requests</thead>
         <tbody>
           {ListItems.map((li) => (
             <ListItem key={li} />

@@ -10,7 +10,7 @@ const AppbarContainer = () => {
   const imgUrl = data?.user?.image ? data?.user?.image : img
 
   return (
-    <Appbar signIn={signIn} signOut={signOut} isAuth={isAuth} imgUrl={imgUrl} />
+    <Appbar signIn={()=>{signIn()}} signOut={()=>{signOut}} isAuth={isAuth} imgUrl={imgUrl} />
   )
 }
 

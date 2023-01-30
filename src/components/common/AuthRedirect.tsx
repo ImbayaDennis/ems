@@ -14,7 +14,9 @@ const AuthRedirect = () => {
         </p>
 
         <button
-          onClick={()=>{signIn()}}
+          onClick={()=>{signIn().catch((e)=>{
+            console.error(e);
+          })}}
           className="btn-1"
         >
           Sign In

@@ -5,7 +5,7 @@ const signin = () => {
   return (
     <div className='w-full h-full flex justify-center items-center'>
         <div className="bg-slate-300 dark:bg-slate-600 w-4/5 max-w-md h-1/3 justify-center items-center flex rounded-md shadow-md">
-            <button onClick={()=>{signIn("google")}} className='btn-1'>Authenticate with Google</button>
+            <button onClick={()=>{signIn("google").catch((e)=>{console.error(e)})}} className='btn-1'>Authenticate with Google</button>
         </div>
     </div>
   )
