@@ -2,20 +2,15 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
-export const exampleRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
-
-  getALeaveRequests: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.leaveRequests.findMany();
+export const leaveManagement = createTRPCRouter({
+  getLeaveRequests: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.leaveRequests.findMany({
+      include: { leave_type: true, user: true },
+    });
   }),
-
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
+  getEmployeesOnLeave: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.leaveApproved.findMany({
+      
+    });
   }),
 });

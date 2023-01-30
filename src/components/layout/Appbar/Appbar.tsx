@@ -24,7 +24,7 @@ function Appbar({signIn, signOut, isAuth, imgUrl}: Props) {
       </div>
       <div className="flex items-center">
         {!isAuth ? (<button className='btn-1' onClick={signIn} aria-label='Sign in button'>Sign in</button>) : (<button className='btn-1' onClick={signOut} aria-label='Sign out button'>Sign out</button>)}
-        <div className="w-12 h-12 mx-2 rounded-full overflow-hidden bg-gray-400 dark:bg-gray-600 cursor-pointer">
+        <div className="w-10 h-10 mx-2 rounded-full overflow-hidden bg-gray-400 dark:bg-gray-600 cursor-pointer">
           <Image src={imgUrl} alt="prof-pic" width={48} height={48} priority={isAuth} />
         </div>
       </div>

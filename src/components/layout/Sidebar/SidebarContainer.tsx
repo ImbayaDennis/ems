@@ -17,7 +17,8 @@ const SidebarContainer = ({
 
   const setTheme = () => {
     setIsDarkTheme(!isDarkTheme);
-    localStorage.setItem("darkTheme", `${!isDarkTheme.toString()}`);
+    localStorage.setItem("darkTheme", `${!!isDarkTheme}`);
+    console.log(isDarkTheme.toString())
   };
 
   return (

@@ -18,7 +18,7 @@ const MetricsCard = ({
   metric_three_label = "Metric 3",
 }: Props) => {
   return (
-    <div className="h-1/3 my-4 flex w-full min-w-[24rem] max-w-lg flex-col items-center justify-center rounded-lg bg-slate-300 p-4 shadow-md  dark:bg-slate-600 sm:w-2/5">
+    <div className="h-1/3 my-4 flex w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-lg bg-slate-300 p-4 shadow-md  dark:bg-slate-600">
       <div className="flex h-1/2 w-36 flex-col items-center justify-center">
         <p className="h-20 w-full text-center text-3xl">{metric_one}</p>
         <p className="h-14 w-full text-center text-base">{metric_one_label}</p>
