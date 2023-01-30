@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ReactNode, Dispatch, SetStateAction } from "react";
+import type { ReactNode, Dispatch, SetStateAction } from "react";
 import { HiCollection, HiHome, HiMenu, HiMoon, HiSun } from "react-icons/hi";
 import { AdminLinks, EmployeeLinks } from "../../../assets/constants";
 import { useRouter } from "next/router";

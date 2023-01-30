@@ -2,9 +2,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import MetricsCard from "../../common/MetricsCard";
 
-type Props = {};
-
-const EmployeeHomePage = (props: Props) => {
+const EmployeeHomePage = () => {
   const { data: session } = useSession();
   return (
     <>

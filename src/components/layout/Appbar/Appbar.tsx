@@ -1,12 +1,13 @@
 import Head from 'next/head'
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
+import type { StaticImageData } from 'next/image';
 import React from 'react'
 
 type Props = {
   signIn: () => void;
   signOut: () => void;
   isAuth: boolean
-  imgUrl: string | StaticImageData
+  imgUrl: string | StaticImageData;
 }
 
 function Appbar({signIn, signOut, isAuth, imgUrl}: Props) {

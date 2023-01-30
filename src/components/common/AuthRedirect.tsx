@@ -14,9 +14,7 @@ const AuthRedirect = () => {
         </p>
 
         <button
-          onClick={() => {
-            signIn();
-          }}
+          onClick={()=>{signIn()}}
           className="btn-1"
         >
           Sign In
