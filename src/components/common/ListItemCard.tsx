@@ -1,4 +1,4 @@
-import Image, { StaticImageData } from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import React from "react";
 import { AdminLinks } from "../../assets/constants";

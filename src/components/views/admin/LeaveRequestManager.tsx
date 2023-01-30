@@ -1,4 +1,4 @@
-import Image, { StaticImageData } from 'next/image'
+import Image, { type StaticImageData } from 'next/image'
 import React from 'react'
 import { trpc } from '../../../utils/trpc'
 import img from "../../../assets/images/blank-profile-picture.jpg"
@@ -26,7 +26,7 @@ const LeaveRequestManager = () => {
           {leaveRequests?.map((request) => (
             <ListItem
               key={request.id}
-              image={request.user.image!}
+              image={request.user.image || img}
               column1={request.user.name}
               column2={request.leave_type.leave_type}
             />
