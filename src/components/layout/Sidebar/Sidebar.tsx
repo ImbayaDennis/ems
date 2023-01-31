@@ -20,15 +20,13 @@ const Sidebar = ({
 }: Props) => {
   const width = sidebarIsOpen ? "w-[20rem]" : "w-12";
   const { data: session } = useSession();
-  const overlayClasses =
-    "-z-10 absolute w-screen h-screen bg-black/20 backdrop-blur-sm top-0 left-0";
 
   if (session?.user?.role === "admin") {
     return (
       <div
         className={`z-20 border-r border-r-gray-300 bg-slate-100 dark:border-r-gray-900 dark:bg-slate-800 ${width}  flex h-full flex-col items-center transition-all`}
       >
-        <div className={sidebarIsOpen ? overlayClasses : ""} onClick={()=>{setSidebarIsOpen(false)}} />
+        <div className={sidebarIsOpen ? "-z-10 absolute w-screen h-screen bg-black/20 backdrop-blur-sm top-0 left-0" : ""} onClick={()=>{setSidebarIsOpen(false)}} />
         <button
           aria-label="expand sidebar"
           onClick={() => setSidebarIsOpen((prev) => !prev)}
@@ -77,8 +75,18 @@ const Sidebar = ({
   } else {
     return (
       <div
-        className={`border-r border-r-gray-300 bg-slate-100 dark:border-r-gray-900 dark:bg-slate-800 ${width}  flex h-full flex-col items-center transition-all`}
+        className={`z-20 border-r border-r-gray-300 bg-slate-100 dark:border-r-gray-900 dark:bg-slate-800 ${width}  flex h-full flex-col items-center transition-all`}
       >
+        <div
+          className={
+            sidebarIsOpen
+              ? "absolute top-0 left-0 -z-10 h-screen w-screen bg-black/20 backdrop-blur-sm"
+              : ""
+          }
+          onClick={() => {
+            setSidebarIsOpen(false);
+          }}
+        />
         <button
           aria-label="expand sidebar"
           onClick={() => setSidebarIsOpen((prev) => !prev)}
@@ -96,7 +104,6 @@ const Sidebar = ({
               icon={<HiHome />}
               to="Home"
             />
-
           </div>
           <div className="">
             <button
