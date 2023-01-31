@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider          = "mysql"
+  provider          = "postgresql"
   // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
   // Further reading:
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
@@ -28,8 +28,8 @@ model LeaveRequests {
   id            String    @id @default(cuid())
   user_id       String    @unique
   leave_type_id String
-  start_date    DateTime
-  end_date      DateTime
+  start_date    String
+  end_date      String
   user          User      @relation(fields: [user_id], references: [id])
   leave_type    LeaveType @relation(fields: [leave_type_id], references: [id])
 
@@ -41,8 +41,9 @@ model LeaveApproved {
   id            String    @id @default(cuid())
   leave_type_id String
   user_id       String
-  start_date    DateTime
-  end_date      DateTime
+  start_date    String
+  end_date      String
+  approved      Boolean
   user          User      @relation(fields: [user_id], references: [id])
   leave_type    LeaveType @relation(fields: [leave_type_id], references: [id])
 

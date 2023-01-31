@@ -6,6 +6,7 @@ import { api } from "../utils/api";
 
 import "../styles/globals.css";
 import Layout from "../components/layout/Layout";
+import ModalsContext from "../contexts/ModalsContext";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -13,9 +14,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
+      <ModalsContext>
         <Layout>
           <Component {...pageProps} />
         </Layout>
+      </ModalsContext>
     </SessionProvider>
   );
 };

@@ -16,8 +16,10 @@ const SidebarContainer = ({
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
 
   const setTheme = () => {
-    setIsDarkTheme(!isDarkTheme);
-    localStorage.setItem("darkTheme", `${!!isDarkTheme}`);
+    const theme = !isDarkTheme
+
+    setIsDarkTheme(theme);
+    localStorage.setItem("darkTheme", theme.toString());
     console.log(isDarkTheme.toString())
   };
 
