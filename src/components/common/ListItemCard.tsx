@@ -66,16 +66,16 @@ const ListItem = ({
           <Image src={image || img} width={48} height={48} alt="image" />
         </div>
       </td>
-      <td className="p-2">
+      <td className="p-2 w-1/5">
         <p>{column1}</p>
       </td>
-      <td className="p-2">
+      <td className="p-2 w-1/5">
         <p>{column2}</p>
       </td>
-      <td className="p-2">
+      <td className="p-2 w-1/5">
         <p>{column3}</p>
       </td>
-      <td className="p-2">
+      <td className="p-2 w-1/5">
         <p>{column4}</p>
       </td>
     </tr>
