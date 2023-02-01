@@ -14,7 +14,7 @@ const DashboardRightPanel = ({openLeaveReqModal, leaveRequestData}: Props) => {
           <button
             onClick={openLeaveReqModal}
             className="btn-1 w-1/3 self-center"
-            disabled={!!leaveRequestData}
+            disabled={!!leaveRequestData ? true : false}
           >
             Request Leave
           </button>
