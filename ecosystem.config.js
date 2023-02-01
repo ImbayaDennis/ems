@@ -9,7 +9,7 @@ module.exports = {
       user : 'ubuntu',
       host : '3.8.87.30',
       ref  : 'origin/main',
-      repo : 'git@github.com:ImbayaDennis/EMS.git',
+      repo : 'git@github.com:ImbayaDennis/ems.git',
       path : '/home/ubuntu',
       'pre-deploy-local': '',
       'post-deploy' : 'source ~/.nvm/nvm.sh && npm install && npm run build && pm2 reload ecosystem.config.js --env production',
