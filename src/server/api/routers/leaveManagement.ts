@@ -9,8 +9,8 @@ export const leaveManagement = createTRPCRouter({
     });
   }),
   getLeaveRequest: protectedProcedure
-  .query(({ctx}) =>{
-    return ctx.prisma.leaveRequests.findUnique({
+  .query(async({ctx}) =>{
+    return await ctx.prisma.leaveRequests.findUnique({
       where: {user_id: ctx.session.user.id}
     })
   }),
@@ -23,7 +23,7 @@ export const leaveManagement = createTRPCRouter({
       }
     });
   }),
-  requestLeave: protectedProcedure.input(z.object({ userId: z.string(), leaveTypeId: z.string(), startDate: z.string(), endDate: z.string() }))
+  requestLeave: protectedProcedure.input(z.object({ userId: z.string(), leaveTypeId: z.string().nullable(), startDate: z.string().nullable(), endDate: z.string().nullable() }))
   .mutation(async({ ctx, input }) =>{
     return await ctx.prisma.leaveRequests.create({
       data: { user_id: input.userId, leave_type_id: input.leaveTypeId, start_date: input.startDate, end_date: input.endDate }

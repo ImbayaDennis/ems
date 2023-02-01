@@ -54,7 +54,7 @@ const LeaveRequestForm = ({
             {leaveTypes?.map((leaveType) => (
               <option
                 key={leaveType.id}
-                value={leaveType.leave_type}
+                value={leaveType.leave_type || undefined}
                 id={leaveType.id}
                 className="rounded-sm bg-slate-50/70 p-2 text-slate-700 outline-none dark:bg-slate-500/40"
               >{leaveType.leave_type}</option>

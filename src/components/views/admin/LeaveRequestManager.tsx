@@ -39,7 +39,7 @@ const LeaveRequestManager = () => {
               }}
               image={request.user.image || img}
               column1={request.user.name}
-              column2={request.leave_type.leave_type}
+              column2={request.leave_type?.leave_type}
               column3={request.start_date}
               column4={request.end_date}
             />

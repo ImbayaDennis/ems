@@ -1,4 +1,5 @@
 import type { LeaveRequests, LeaveType, User } from "@prisma/client";
+import { useSession } from "next-auth/react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -9,14 +10,16 @@ import { trpc } from "../../utils/trpc";
 type ListCardProps = {
   title: string;
   btn_lbl: string;
-  listData?: (LeaveRequests & {
-    user: User;
-    leave_type: LeaveType;
-})[] | undefined;
-}
-
+  listData?:
+    | (LeaveRequests & {
+        user: User;
+        leave_type: LeaveType | null;
+      })[]
+    | undefined;
+};
 
 const ListItemCard = ({title = "table header", btn_lbl = "details"}: ListCardProps) => {
+  const {data: session} = useSession();
   const {data: leaveRequests} = trpc.leaveManagement.getLeaveRequests.useQuery()
   return (
     <div className="my-4 flex h-fit min-h-max w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-lg bg-slate-300 p-4 shadow-md  dark:bg-slate-600">
@@ -28,7 +31,7 @@ const ListItemCard = ({title = "table header", btn_lbl = "details"}: ListCardPro
         </thead>
         <tbody>
            {leaveRequests?.slice(0,3).map((request) => (
-            <ListItem key={request.id} image={request.user.image} column1={request.user.name} column2={request.leave_type.leave_type} column3={request.start_date} column4={request.end_date} />
+            <ListItem key={request.id} image={request.user.image } column1={request.user.name} column2={request.leave_type?.leave_type} column3={request.start_date} column4={request.end_date} />
           ))}  
         </tbody>
       </table>
