@@ -43,7 +43,7 @@ const LeaveRequestForm = ({
             id="leave-types"
             onChange={(e) => {
               const current = leaveTypes?.filter(
-                (x) => x.leave_type !== e.currentTarget.value
+                (x) => x.leave_type === e.currentTarget.value
               )[0]?.id;
               leaveTypes
                 ? setLeaveTypeId(current ? current : "")
