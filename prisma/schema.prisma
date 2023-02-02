@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
@@ -11,8 +12,9 @@ datasource db {
   // Further reading:
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
   // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-  url               = env("DATABASE_URL")
   // shadowDatabaseUrl = env("SHADOW_DB_URL")
+  url               = env("DATABASE_URL")
+  schemas           = ["dev", "dev_2"]
   relationMode      = "prisma"
 }
 
