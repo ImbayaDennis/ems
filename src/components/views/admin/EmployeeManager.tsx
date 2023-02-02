@@ -1,56 +1,63 @@
 import Image, { type StaticImageData } from 'next/image'
-import React from 'react'
+import { HiCheck, HiX } from 'react-icons/hi'
+import img from '../../../assets/images/blank-profile-picture.jpg'
 import { trpc } from '../../../utils/trpc'
-import img from "../../../assets/images/blank-profile-picture.jpg"
-import { HiCheck, HiX } from "react-icons/hi";
 
-const LeaveRequestManager = () => {
-  const { data: leaveRequests, refetch } =
-    trpc.leaveManagement.getLeaveRequests.useQuery();
+type Props = {}
+
+const EmployeeManager = (props: Props) => {
+    const { data: employees, refetch } = trpc.employees.getEmployees.useQuery();
+    const {data: employeesOnLeave} = trpc.leaveManagement.getEmployeesOnLeave.useQuery();
   return (
     <div>
       <table className="w-full">
         <thead className="w-full">
           <tr>
             <td>
-              <p className="my-8 text-2xl">Leave Request Manager</p>
+              <p className="my-8 text-2xl">Employee Manager</p>
             </td>
           </tr>
           <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-200 p-2 text-slate-700 dark:bg-slate-700 dark:text-slate-50">
             <td className="p-2">
               <div className="h-8 w-8"></div>
             </td>
-            <td className="w-36 p-2">Employee name</td>
-            <td className="w-36 p-2">Leave type</td>
-            <td className="w-36 p-2">Start date</td>
-            <td className="w-36 p-2">Return date</td>
+            <td className="w-36 p-2">Employee ID</td>
+            <td className="w-36 p-2">Empoyee name</td>
+            <td className="w-36 p-2">Email address</td>
+            <td className="w-36 p-2">Role</td>
+            <td className="w-36 p-2">On leave</td>
             <td className="w-36 p-2">
-              <p className="text-center">Approve</p>
+              <p className="text-center">Remove</p>
             </td>
           </tr>
         </thead>
         <tbody>
-          {leaveRequests?.map((request) => (
+          {employees?.map((employee) => (
             <ListItem
-              key={request.id}
-              request_id={request.id}
+              key={employee.id}
+              employee_id={employee.employee_id || ""}
               refetch={() => {
                 refetch().catch((e) => console.error(e));
               }}
-              image={request.user.image || img}
-              column1={request.user.name}
-              column2={request.leave_type?.leave_type}
-              column3={request.start_date}
-              column4={request.end_date}
+              image={employee.user?.image || img}
+              column1={employee.employee_id}
+              column2={employee.name}
+              column3={employee.email}
+              column4={employee.user?.role}
+              column5={
+                employeesOnLeave?.filter((x) => x.user_id === employee.user?.id)[0]?.approved
+                  ? "On leave"
+                  : "Active"
+              }
             />
           ))}
         </tbody>
       </table>
     </div>
   );
-};
+}
 
-export default LeaveRequestManager;
+export default EmployeeManager
 
 type ListItemProps = {
   image?: string | StaticImageData;
@@ -60,7 +67,7 @@ type ListItemProps = {
   column4?: string | number | null;
   column5?: string | number | null;
   column6?: string | number | null;
-  request_id: string;
+  employee_id: string;
   refetch: () => void;
 };
 
@@ -69,12 +76,13 @@ const ListItem = ({
   column1 = "column1",
   column2 = "column2",
   column3 = "column3",
-  column4 = "column4",
-  request_id,
+  column4 = "employee",
+  column5 = "column5",
+  employee_id,
   refetch,
 }: ListItemProps) => {
-  const leaveRequestApproval =
-    trpc.leaveManagement.approveLeaveRequest.useMutation();
+  const removeEmployee =
+    trpc.employees.removeEmployee.useMutation();
   return (
     <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-100 p-2 text-slate-600 dark:bg-slate-500 dark:text-slate-50">
       <td className="p-2">
@@ -82,43 +90,31 @@ const ListItem = ({
           <Image src={image} width={48} height={48} alt="profile-img" />
         </div>
       </td>
-      <td className="w-36 p-2 text-sm">
+      <td className="w-36 p-2 text-ellipsis text-sm">
         <p>{column1}</p>
       </td>
-      <td className="w-36 p-2 text-sm">
+      <td className="w-36 p-2 text-ellipsis text-sm">
         <p>{column2}</p>
       </td>
-      <td className="w-36 p-2 text-sm">
+      <td className="w-36 p-2 text-ellipsis text-sm">
         <p>{column3}</p>
       </td>
-      <td className="w-36 p-2 text-sm">
+      <td className="w-36 p-2 text-ellipsis text-sm">
         <p>{column4}</p>
+      </td>
+      <td className="w-36 p-2 text-ellipsis text-sm">
+        <p>{column5}</p>
       </td>
       <td className="flex w-36 justify-center p-2">
         <div className="flex">
           <button
             onClick={() => {
-              leaveRequestApproval
+              removeEmployee
                 .mutateAsync({
-                  leaveRequestId: request_id,
-                  approved: true,
+                  employeeId: employee_id,
                 })
                 .then(() => refetch())
-                .catch(e=>console.error(e));
-            }}
-            className="btn-1 flex h-8 w-10 items-center justify-center"
-          >
-            <HiCheck />
-          </button>
-          <button
-            onClick={() => {
-              leaveRequestApproval
-                .mutateAsync({
-                  leaveRequestId: request_id,
-                  approved: false,
-                })
-                .then(() => refetch())
-                .catch(e=>console.error(e));
+                .catch((e) => console.error(e));
             }}
             className="btn-1 flex h-8 w-10 items-center justify-center"
           >

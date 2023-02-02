@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
+  //previewFeatures = ["multiSchema"]
 }
 
 datasource db {
@@ -14,7 +14,7 @@ datasource db {
   // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   // shadowDatabaseUrl = env("SHADOW_DB_URL")
   url               = env("DATABASE_URL")
-  schemas           = ["dev", "dev_2"]
+  //schemas           = ["dev", "dev_2"]
   relationMode      = "prisma"
 }
 
@@ -55,9 +55,10 @@ model LeaveApproved {
 
 model Employees {
   id            String  @id @default(cuid())
-  employee_id   String?
+  employee_id   String? @unique
   name          String?
   email         String? @unique
+  user          User?
 }
 
 // Necessary for Next auth
@@ -74,7 +75,7 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -101,6 +102,7 @@ model User {
   sessions      Session[]
   LeaveRequests LeaveRequests?
   LeaveApproved LeaveApproved[]
+  Employee      Employees? @relation(fields: [email], references: [email], onDelete: Cascade)
 }
 
 model VerificationToken {

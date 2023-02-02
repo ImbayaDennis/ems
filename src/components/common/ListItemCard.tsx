@@ -23,14 +23,16 @@ const ListItemCard = ({title = "table header", btn_lbl = "details"}: ListCardPro
   const {data: leaveRequests} = trpc.leaveManagement.getLeaveRequests.useQuery()
   return (
     <div className="my-4 flex h-fit min-h-max w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-lg bg-slate-300 p-4 shadow-md  dark:bg-slate-600">
-      <table className="my-2 h-full w-full flex flex-col">
+      <table className="my-2 flex h-full w-full flex-col">
         <thead className="text-center text-2xl">
           <tr>
             <td>{title}</td>
           </tr>
         </thead>
         <tbody className="overflow-x-scroll scrollbar-thin">
-          {leaveRequests?.slice(0, 3).map((request) => (
+          {
+            leaveRequests && leaveRequests.length > 0 ?
+          leaveRequests?.slice(0, 3).map((request) => (
             <ListItem
               key={request.id}
               image={request.user.image}
@@ -39,12 +41,20 @@ const ListItemCard = ({title = "table header", btn_lbl = "details"}: ListCardPro
               column3={request.start_date}
               column4={request.end_date}
             />
-          ))}
+          )):
+          <p className="py-4">There are currently no leave requests</p>
+          }
         </tbody>
       </table>
-      <Link href={AdminLinks.leaveMngr} className="self-end p-2 ">
-        {btn_lbl}
-      </Link>
+      {AdminLinks[1] ? (
+        <Link href={AdminLinks[1]?.link} className="self-end p-2 ">
+          {btn_lbl}
+        </Link>
+      ) : (
+        <Link href="/" className="self-end p-2 ">
+          {btn_lbl}
+        </Link>
+      )}
     </div>
   );
 };
