@@ -20,7 +20,7 @@ function Layout({ children }: Props) {
     <div
       className={`${
         themeFromStorage ? "dark" : ""
-      } z-0 h-screen w-screen overflow-hidden`}
+      } z-0 h-screen w-screen overflow-hidden bg-gray-100 dark:bg-gray-800`}
     >
       {session && <AppbarContainer />}
       <div className="flex h-[calc(100vh-3rem)] w-full">

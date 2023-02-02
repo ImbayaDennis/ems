@@ -52,10 +52,10 @@ model LeaveApproved {
 }
 
 model Employees {
-  id            String  @id
+  id            String  @id @default(cuid())
   employee_id   String?
   name          String?
-  email_address String?
+  email         String? @unique
 }
 
 // Necessary for Next auth

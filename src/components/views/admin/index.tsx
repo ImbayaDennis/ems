@@ -27,11 +27,11 @@ const AdminHomePage = () => {
 
   return (
     <div className="h-full w-full">
-      <h1 className="my-8 text-center text-2xl md:text-start">
+      <h1 className="my-8 mx-4 text-2xl text-start">
         Welcome, {session?.user?.name || "[Admin name]"}
       </h1>
-      <div className="flex h-full w-full flex-col flex-wrap sm:flex-row">
-        <div className="flex h-full max-h-[calc(100vh-21rem)] w-full flex-col items-start p-2 md:w-1/2">
+      <div className="flex h-full w-full flex-wrap gap-16">
+        <div className="flex h-full max-h-[calc(100vh-10rem)] w-full flex-col items-start p-2 md:w-1/2">
           <MetricsCard
             metric_one={employees?.length}
             metric_one_label="Total Employees"

@@ -24,11 +24,11 @@ const AdminHomePage = () => {
 
   return (
     <div className="h-full w-full">
-      <h1 className="my-8 text-center text-2xl md:text-start">
+      <h1 className="my-8 mx-4 text-start text-2xl">
         Welcome, {session?.user?.name || "[Admin name]"}
       </h1>
       <div className="flex h-full w-full flex-wrap">
-        <div className="flex h-full max-h-[calc(100vh-21rem)] w-full flex-col items-start md:w-1/2">
+        <div className="m-2 flex h-full max-h-[calc(100vh-10rem)] w-full flex-col items-start p-2 md:w-1/2">
           <MetricsCard
             metric_one_label="Total leave days"
             metric_two_label="Entitled leave days"
@@ -45,7 +45,10 @@ const AdminHomePage = () => {
             }}
           />
         </div>
-        <DashboardRightPanel leaveRequestData={leaveRequestData} openLeaveReqModal={openLeaveReqModal} />
+        <DashboardRightPanel
+          leaveRequestData={leaveRequestData}
+          openLeaveReqModal={openLeaveReqModal}
+        />
       </div>
     </div>
   );

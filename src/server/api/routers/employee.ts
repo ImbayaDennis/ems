@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, protectedProcedure, adminProcedure } from "../trpc";
 
 export const employees = createTRPCRouter({
-  getEmployees: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.employees.findMany({});
+  getEmployees: adminProcedure.query(async({ ctx }) => {
+    return await ctx.prisma.employees.findMany();
   }),
 });
