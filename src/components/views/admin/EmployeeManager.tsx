@@ -1,11 +1,9 @@
 import Image, { type StaticImageData } from 'next/image'
-import { HiCheck, HiX } from 'react-icons/hi'
+import { HiX } from 'react-icons/hi'
 import img from '../../../assets/images/blank-profile-picture.jpg'
 import { trpc } from '../../../utils/trpc'
 
-type Props = {}
-
-const EmployeeManager = (props: Props) => {
+const EmployeeManager = () => {
     const { data: employees, refetch } = trpc.employees.getEmployees.useQuery();
     const {data: employeesOnLeave} = trpc.leaveManagement.getEmployeesOnLeave.useQuery();
   return (

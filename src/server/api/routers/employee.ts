@@ -17,17 +17,17 @@ export const employees = createTRPCRouter({
       return ctx.prisma.user.delete({
         where: {email: deletedEmployee.email}
       })
-    }).then((deletedUser)=>{
-      ctx.prisma.account.deleteMany({
+    }).then(async(deletedUser)=>{
+      await ctx.prisma.account.deleteMany({
         where: {userId: deletedUser?.id}
       })
-      ctx.prisma.session.deleteMany({
+      await ctx.prisma.session.deleteMany({
         where: {userId: deletedUser?.id},
       });
-      ctx.prisma.leaveApproved.deleteMany({
+      await ctx.prisma.leaveApproved.deleteMany({
         where: {user_id: deletedUser?.id},
       });
-      ctx.prisma.leaveRequests.deleteMany({
+      await ctx.prisma.leaveRequests.deleteMany({
         where: {user_id: deletedUser?.id},
       });
     })
