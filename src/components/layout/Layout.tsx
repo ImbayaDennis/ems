@@ -23,7 +23,7 @@ function Layout({ children }: Props) {
       } z-0 h-screen w-screen overflow-hidden bg-gray-100 dark:bg-gray-800`}
     >
       {session && <AppbarContainer />}
-      <div className="flex h-[calc(100vh-3rem)] w-full">
+      <div className="flex h-full w-full">
         {session && (
           <SidebarContainer
             themeFromStorage={themeFromStorage}
