@@ -14,15 +14,18 @@ export const authOptions: NextAuthOptions = {
         const checkEmployeeEmail = await prisma.employees.findUnique({where: {email: user.email }})
         
         if(checkEmployeeEmail){
-          if(!user.role){
-            await prisma.user.update({where: {id: user.id}, data: {role: "employee"}})  
-          }
           return true
         }
       }
       return false
     },
-    session({ session, user }) {
+    async session({ session, user }) {
+      if (!user.role) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { role: "employee" },
+        });
+      }
       if (session.user) {
         session.user.id = user.id;
         session.user.role = user.role;
