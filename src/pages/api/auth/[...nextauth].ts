@@ -12,8 +12,9 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user }){
       if(user.email){
         const checkEmployeeEmail = await prisma.employees.findUnique({where: {email: user.email }})
-        
-        if(checkEmployeeEmail){
+
+        if(!!checkEmployeeEmail){
+          
           return true
         }
       }
@@ -26,7 +27,16 @@ export const authOptions: NextAuthOptions = {
           data: { role: "employee" },
         });
       }
-      if (session.user) {
+      const odgId = await prisma.employees
+        .findUnique({
+          where: { email: user.email || undefined },
+        })
+        .then((employee) => {
+          return employee?.org_id;
+        });
+
+      if (session.user && odgId) {
+        session.user.org_id = odgId;
         session.user.id = user.id;
         session.user.role = user.role;
       }

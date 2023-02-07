@@ -29,7 +29,7 @@ const EmployeeManager = () => {
             </td>
           </tr>
         </thead>
-        <tbody>
+        <tbody className='overflow-x-scroll'>
           {employees?.map((employee) => (
             <ListItem
               key={employee.id}
@@ -88,19 +88,19 @@ const ListItem = ({
           <Image src={image} width={48} height={48} alt="profile-img" />
         </div>
       </td>
-      <td className="w-36 p-2 text-ellipsis text-sm">
+      <td className="w-36 p-2 overflow-hidden text-sm">
         <p>{column1}</p>
       </td>
-      <td className="w-36 p-2 text-ellipsis text-sm">
+      <td className="w-36 p-2 overflow-hidden text-sm">
         <p>{column2}</p>
       </td>
-      <td className="w-36 p-2 text-ellipsis text-sm">
+      <td className="w-36 p-2 overflow-hidden text-sm">
         <p>{column3}</p>
       </td>
-      <td className="w-36 p-2 text-ellipsis text-sm">
+      <td className="w-36 p-2 overflow-hidden text-sm">
         <p>{column4}</p>
       </td>
-      <td className="w-36 p-2 text-ellipsis text-sm">
+      <td className="w-36 p-2 overflow-hidden text-sm">
         <p>{column5}</p>
       </td>
       <td className="flex w-36 justify-center p-2">

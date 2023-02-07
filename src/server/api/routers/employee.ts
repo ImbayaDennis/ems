@@ -5,6 +5,7 @@ import { createTRPCRouter, publicProcedure, protectedProcedure, adminProcedure }
 export const employees = createTRPCRouter({
   getEmployees: adminProcedure.query(async({ ctx }) => {
     return await ctx.prisma.employees.findMany({
+      where: {org_id: ctx.session.user.org_id},
       include: {user: true}
     });
   }),

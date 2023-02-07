@@ -22,6 +22,7 @@ model LeaveType {
   id            String          @id @default(cuid())
   leave_type    String?
   leave_desc    String?
+  leave_days    Int
   LeaveRequests LeaveRequests[]
   LeaveApproved LeaveApproved[]
 }
@@ -58,13 +59,17 @@ model Employees {
   employee_id   String? @unique
   name          String?
   email         String? @unique
+  org_id        String?
   user          User?
+  organization  Organization? @relation(fields: [org_id], references: [id], onDelete: Cascade)
+
+  @@index([org_id])
 }
 
 model Organization {
   id            String @id @default(cuid())
   name          String
-  user          User[]
+  epmloyees     Employees[]
 }
 
 // Necessary for Next auth
@@ -104,13 +109,12 @@ model User {
   emailVerified DateTime?
   image         String?
   role          String?
-  org_id        String
+  org_id        String?
   accounts      Account?
   sessions      Session[]
   LeaveRequests LeaveRequests?
   LeaveApproved LeaveApproved[]
   Employee      Employees? @relation(fields: [email], references: [email], onDelete: Cascade)
-  organization  Organization @relation(fields: [org_id], references: [id], onDelete: Cascade)
 
   @@index([email])
   @@index([org_id])
