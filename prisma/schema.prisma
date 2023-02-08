@@ -22,6 +22,7 @@ model LeaveType {
   id            String          @id @default(cuid())
   leave_type    String?
   leave_desc    String?
+  leave_days    Int?
   LeaveRequests LeaveRequests[]
   LeaveApproved LeaveApproved[]
 }
