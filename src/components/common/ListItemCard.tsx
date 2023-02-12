@@ -1,4 +1,4 @@
-import type { LeaveRequests, LeaveType, User } from "@prisma/client";
+import type { Employee, LeaveRequests, LeaveType } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
@@ -6,21 +6,34 @@ import React from "react";
 import { AdminLinks } from "../../assets/constants";
 import img from "../../assets/images/blank-profile-picture.jpg"
 import { trpc } from "../../utils/trpc";
+import Loader from "./Loader";
 
 type ListCardProps = {
   title: string;
   btn_lbl: string;
   listData?:
     | (LeaveRequests & {
-        user: User;
+        employee: Employee;
         leave_type: LeaveType | null;
       })[]
     | undefined;
 };
 
-const ListItemCard = ({title = "table header", btn_lbl = "details"}: ListCardProps) => {
-  const {data: session} = useSession();
-  const {data: leaveRequests} = trpc.leaveManagement.getLeaveRequests.useQuery()
+const ListItemCard = ({
+  title = "table header",
+  btn_lbl = "details",
+}: ListCardProps) => {
+  const { data: session } = useSession();
+  const { data: leaveRequests, isLoading } =
+    trpc.leaveManagement.getLeaveRequests.useQuery();
+
+  if (isLoading) {
+    return (
+      <div className="my-4 flex h-fit min-h-max w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-lg bg-slate-300 p-4 shadow-md  dark:bg-slate-600">
+        <Loader />
+      </div>
+    );
+  }
   return (
     <div className="my-4 flex h-fit min-h-max w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-lg bg-slate-300 p-4 shadow-md  dark:bg-slate-600">
       <table className="my-2 flex h-full w-full flex-col">
@@ -30,20 +43,24 @@ const ListItemCard = ({title = "table header", btn_lbl = "details"}: ListCardPro
           </tr>
         </thead>
         <tbody className="overflow-x-scroll scrollbar-thin">
-          {
-            leaveRequests && leaveRequests.length > 0 ?
-          leaveRequests?.slice(0, 3).map((request) => (
-            <ListItem
-              key={request.id}
-              image={request.user.image}
-              column1={request.user.name}
-              column2={request.leave_type?.leave_type}
-              column3={request.start_date}
-              column4={request.end_date}
-            />
-          )):
-          <p className="py-4">There are currently no leave requests</p>
-          }
+          {leaveRequests && leaveRequests.length > 0 ? (
+            leaveRequests
+              ?.slice(0, 3)
+              .map((request) => (
+                <ListItem
+                  key={request.id}
+                  image={request.employee.user?.image}
+                  column1={request.employee.name}
+                  column2={request.leave_type?.leave_type}
+                  column3={request.start_date}
+                  column4={request.end_date}
+                />
+              ))
+          ) : (
+            <tr className="py-4">
+              <td>There are currently no leave requests</td>
+            </tr>
+          )}
         </tbody>
       </table>
       {AdminLinks[1] ? (

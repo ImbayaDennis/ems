@@ -2,10 +2,37 @@ import Image, { type StaticImageData } from 'next/image'
 import { HiX } from 'react-icons/hi'
 import img from '../../../assets/images/blank-profile-picture.jpg'
 import { trpc } from '../../../utils/trpc'
+import Loader from "../../common/Loader";
 
 const EmployeeManager = () => {
-    const { data: employees, refetch } = trpc.employees.getEmployees.useQuery();
-    const {data: employeesOnLeave} = trpc.leaveManagement.getEmployeesOnLeave.useQuery();
+  const {
+    data: employees,
+    refetch,
+    isLoading,
+  } = trpc.employees.getEmployees.useQuery();
+  const { data: employeesOnLeave } =
+    trpc.leaveManagement.getEmployeesOnLeave.useQuery();
+
+  if (isLoading) {
+    return (
+      <table className="w-full">
+        <thead className="w-full">
+          <tr>
+            <td>
+              <p className="my-8 w-full text-2xl">Employee Manager</p>
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <Loader />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    );
+  }
   return (
     <div>
       <table className="w-full">
@@ -29,7 +56,7 @@ const EmployeeManager = () => {
             </td>
           </tr>
         </thead>
-        <tbody className='overflow-x-scroll'>
+        <tbody className="overflow-x-scroll">
           {employees?.map((employee) => (
             <ListItem
               key={employee.id}
@@ -43,7 +70,9 @@ const EmployeeManager = () => {
               column3={employee.email}
               column4={employee.user?.role}
               column5={
-                employeesOnLeave?.filter((x) => x.user_id === employee.user?.id)[0]?.approved
+                employeesOnLeave?.filter(
+                  (x) => x.user_id === employee.user?.id
+                )[0]?.approved
                   ? "On leave"
                   : "Active"
               }
@@ -53,7 +82,7 @@ const EmployeeManager = () => {
       </table>
     </div>
   );
-}
+};
 
 export default EmployeeManager
 

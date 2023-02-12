@@ -23,44 +23,65 @@ model LeaveType {
   leave_type    String?
   leave_desc    String?
   leave_days    Int?
-  LeaveRequests LeaveRequests[]
-  LeaveApproved LeaveApproved[]
+  leaveRequests LeaveRequests[]
+  requestApproved RequestApproved[]
+  requestRejected RequestRejected[]
 }
 
 model LeaveRequests {
   id            String    @id @default(cuid())
-  user_id       String    @unique
+  employee_id       String    @unique
   leave_type_id String?
   start_date    String?
   end_date      String?
-  user          User      @relation(fields: [user_id], references: [id])
+  leave_days    Int?
+  employee      Employee      @relation(fields: [employee_id], references: [id])
   leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id])
 
   @@index([leave_type_id])
-  @@index([user_id])
+  @@index([employee_id])
 }
 
-model LeaveApproved {
+model RequestApproved {
   id            String    @id @default(cuid())
   leave_type_id String?
-  user_id       String
+  employee_id       String
   start_date    String?
   end_date      String?
-  approved      Boolean?
-  user          User      @relation(fields: [user_id], references: [id])
+  still_on_leave Boolean? @default(true)
+  return_date   String?
+  employee      Employee      @relation(fields: [employee_id], references: [id])
   leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id])
 
   @@index([leave_type_id])
-  @@index([user_id])
+  @@index([employee_id])
 }
 
-model Employees {
+model RequestRejected {
+  id            String    @id @default(cuid())
+  leave_type_id String?
+  employee_id       String
+  start_date    String?
+  end_date      String?
+  employee      Employee      @relation(fields: [employee_id], references: [id])
+  leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id])
+
+  @@index([leave_type_id])
+  @@index([employee_id])
+}
+
+model Employee {
   id            String  @id @default(cuid())
   employee_id   String? @unique
   name          String?
   email         String? @unique
-  org_id        String?
+  org_id        String? @unique
+  leave_days    Int?
+  leave_bal     Int?
   user          User?
+  leaveRequests LeaveRequests?
+  requestApproved RequestApproved[]
+  requestRejected RequestRejected[]
   organization  Organization? @relation(fields: [org_id], references: [id], onDelete: Cascade)
 
   @@index([org_id])
@@ -69,7 +90,7 @@ model Employees {
 model Organization {
   id            String @id @default(cuid())
   name          String
-  epmloyees     Employees[]
+  epmloyees     Employee[]
 }
 
 // Necessary for Next auth
@@ -112,9 +133,7 @@ model User {
   org_id        String?
   accounts      Account?
   sessions      Session[]
-  LeaveRequests LeaveRequests?
-  LeaveApproved LeaveApproved[]
-  Employee      Employees? @relation(fields: [email], references: [email], onDelete: Cascade)
+  Employee      Employee? @relation(fields: [email], references: [email], onDelete: Cascade)
 
   @@index([email])
   @@index([org_id])

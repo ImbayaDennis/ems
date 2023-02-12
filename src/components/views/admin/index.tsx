@@ -11,10 +11,10 @@ import MetricsCard from "../../common/MetricsCard";
 const AdminHomePage = () => {
   const{data:session} = useSession();
 
-  const {data: employees} = trpc.employees.getEmployees.useQuery()
-  const {data: employeesOnLeave} = trpc.leaveManagement.getEmployeesOnLeave.useQuery()
-  const {data: leaveRequestData, refetch} = trpc.leaveManagement.getLeaveRequests.useQuery()
-  const {data: leaveRequest} = trpc.leaveManagement.getLeaveRequest.useQuery()
+  const {data: employees, isLoading: employeesLoading} = trpc.employees.getEmployees.useQuery()
+  const {data: employeesOnLeave, isLoading: employeesOnLeaveLoading} = trpc.leaveManagement.getEmployeesOnLeave.useQuery()
+  const {data: leaveRequestData, isLoading: leaveRequestDataLoading, refetch} = trpc.leaveManagement.getLeaveRequests.useQuery()
+  const {data: leaveRequest, isLoading:leaveRequestLoading } = trpc.leaveManagement.getLeaveRequest.useQuery()
   const modalContext = useContext(ModalContextProvider);
 
 
@@ -37,7 +37,9 @@ const AdminHomePage = () => {
             metric_one_label="Total Employees"
             metric_two={employeesOnLeave?.length}
             metric_two_label="Employees on leave"
+            metric_three={(employees?.length || 0) - (employeesOnLeave?.length || 0)}
             metric_three_label="Active Employees"
+            isLoading={employeesLoading}
           />
           <ListItemCard
             title="Leave Requests"

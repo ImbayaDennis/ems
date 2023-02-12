@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user }){
       if(user.email){
-        const checkEmployeeEmail = await prisma.employees.findUnique({where: {email: user.email }})
+        const checkEmployeeEmail = await prisma.employee.findUnique({where: {email: user.email }})
 
         if(!!checkEmployeeEmail){
           
@@ -27,16 +27,17 @@ export const authOptions: NextAuthOptions = {
           data: { role: "employee" },
         });
       }
-      const odgId = await prisma.employees
+      const employee = await prisma.employee
         .findUnique({
           where: { email: user.email || undefined },
         })
         .then((employee) => {
-          return employee?.org_id;
+          return employee;
         });
 
-      if (session.user && odgId) {
-        session.user.org_id = odgId;
+      if (session.user && employee?.org_id && employee.employee_id) {
+        session.user.employee_id = employee.employee_id
+        session.user.org_id = employee?.org_id;
         session.user.id = user.id;
         session.user.role = user.role;
       }

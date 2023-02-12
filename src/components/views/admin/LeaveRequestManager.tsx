@@ -3,17 +3,46 @@ import React from 'react'
 import { trpc } from '../../../utils/trpc'
 import img from "../../../assets/images/blank-profile-picture.jpg"
 import { HiCheck, HiX } from "react-icons/hi";
+import Loader from "../../common/Loader";
 
 const LeaveRequestManager = () => {
-  const { data: leaveRequests, refetch } =
-    trpc.leaveManagement.getLeaveRequests.useQuery();
+  const {
+    data: leaveRequests,
+    refetch,
+    isLoading,
+  } = trpc.leaveManagement.getLeaveRequests.useQuery();
+  const {
+    data: approvedRequests
+  } =trpc.leaveManagement.getEmployeesOnLeave.useQuery();
+  if (isLoading) {
+    return (
+      <table className="w-full">
+        <thead className='w-full'>
+          <tr>
+            <td>
+              <p className="my-8 w-full text-2xl">
+                Leave Requests
+              </p>
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <Loader />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    );
+  }
   return (
     <div>
       <table className="w-full">
         <thead className="w-full">
           <tr>
             <td>
-              <p className="my-8 text-2xl">Leave Request Manager</p>
+              <p className="my-8 text-2xl">Leave Requests</p>
             </td>
           </tr>
           <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-200 p-2 text-slate-700 dark:bg-slate-700 dark:text-slate-50">
@@ -31,6 +60,44 @@ const LeaveRequestManager = () => {
         </thead>
         <tbody>
           {leaveRequests?.map((request) => (
+            <ListItem
+              key={request.id}
+              request_id={request.id}
+              refetch={() => {
+                refetch().catch((e) => console.error(e));
+              }}
+              image={request.user.image || img}
+              column1={request.user.name}
+              column2={request.leave_type?.leave_type}
+              column3={request.start_date}
+              column4={request.end_date}
+            />
+          ))}
+        </tbody>
+      </table>
+
+      <table className="w-full">
+        <thead className="w-full">
+          <tr>
+            <td>
+              <p className="my-8 text-2xl">Employees on leave</p>
+            </td>
+          </tr>
+          <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-200 p-2 text-slate-700 dark:bg-slate-700 dark:text-slate-50">
+            <td className="p-2">
+              <div className="h-8 w-8"></div>
+            </td>
+            <td className="w-36 p-2">Employee name</td>
+            <td className="w-36 p-2">Leave type</td>
+            <td className="w-36 p-2">Start date</td>
+            <td className="w-36 p-2">Return date</td>
+            <td className="w-36 p-2">
+              <p className="text-center">Approve</p>
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          {approvedRequests?.map((request) => (
             <ListItem
               key={request.id}
               request_id={request.id}
@@ -75,6 +142,7 @@ const ListItem = ({
 }: ListItemProps) => {
   const leaveRequestApproval =
     trpc.leaveManagement.approveLeaveRequest.useMutation();
+
   return (
     <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-100 p-2 text-slate-600 dark:bg-slate-500 dark:text-slate-50">
       <td className="p-2">
@@ -104,7 +172,7 @@ const ListItem = ({
                   approved: true,
                 })
                 .then(() => refetch())
-                .catch(e=>console.error(e));
+                .catch((e) => console.error(e));
             }}
             className="btn-1 flex h-8 w-10 items-center justify-center"
           >
@@ -118,7 +186,7 @@ const ListItem = ({
                   approved: false,
                 })
                 .then(() => refetch())
-                .catch(e=>console.error(e));
+                .catch((e) => console.error(e));
             }}
             className="btn-1 flex h-8 w-10 items-center justify-center"
           >
