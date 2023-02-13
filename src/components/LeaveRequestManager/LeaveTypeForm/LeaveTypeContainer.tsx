@@ -1,9 +1,7 @@
 import {FormEvent} from 'react'
 import LeaveTypePresentation from './LeaveTypePresentation'
 
-type Props = {}
-
-const LeaveTypeContainer = (props: Props) => {
+const LeaveTypeContainer = () => {
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()

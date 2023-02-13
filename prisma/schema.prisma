@@ -14,15 +14,15 @@ datasource db {
   // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   // shadowDatabaseUrl = env("SHADOW_DB_URL")
   url               = env("DATABASE_URL")
-  //schemas           = ["dev", "dev_2"]
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
   relationMode      = "prisma"
 }
 
 model LeaveType {
   id            String          @id @default(cuid())
-  leave_type    String?
-  leave_desc    String?
-  leave_days    Int?
+  leave_type    String
+  leave_desc    String
+  leave_days    Int
   leaveRequests LeaveRequests[]
   requestApproved RequestApproved[]
   requestRejected RequestRejected[]

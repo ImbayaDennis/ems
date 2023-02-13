@@ -115,10 +115,10 @@ export const leaveManagement = createTRPCRouter({
     return await ctx.prisma.leaveType.findMany();
   }),
   createLeaveType: adminProcedure
-    .input(z.object({ leave_desc: z.string(), leave_type: z.string() }))
+    .input(z.object({ leave_desc: z.string(), leave_type: z.string(), leave_days: z.number() }))
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.leaveType.create({
-        data: { leave_desc: input.leave_desc, leave_type: input.leave_type },
+        data: { leave_desc: input.leave_desc, leave_type: input.leave_type, leave_days: input.leave_days },
       });
     }),
 });
