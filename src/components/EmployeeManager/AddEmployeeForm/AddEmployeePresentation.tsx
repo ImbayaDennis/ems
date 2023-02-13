@@ -39,7 +39,7 @@ const AddEmployeePresentation = ({
             </label>
             <input
               required
-              className="w-full rounded-sm bg-slate-200 p-2 dark:bg-slate-700"
+              className="input-1"
               value={employeeID}
               onChange={(e) => {
                 setEmployeeID(e.currentTarget.value);
@@ -54,7 +54,7 @@ const AddEmployeePresentation = ({
             </label>
             <input
               required
-              className="w-full rounded-sm bg-slate-200 p-2 dark:bg-slate-700"
+              className="input-1"
               value={employeeName}
               onChange={(e) => {
                 setEmployeeName(e.currentTarget.value);
@@ -69,7 +69,7 @@ const AddEmployeePresentation = ({
             </label>
             <input
               required
-              className="w-full rounded-sm bg-slate-200 p-2 dark:bg-slate-700"
+              className="input-1"
               value={employeeEmail}
               onChange={(e) => {
                 setEmployeeEmail(e.currentTarget.value);
@@ -84,7 +84,7 @@ const AddEmployeePresentation = ({
             </label>
             <input
               required
-              className="w-full rounded-sm bg-slate-200 p-2 dark:bg-slate-700"
+              className="input-1"
               value={employeeEmploymentDate}
               onChange={(e) => {
                 setEmployeeEmploymentDate(e.currentTarget.value);

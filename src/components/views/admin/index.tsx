@@ -3,7 +3,7 @@ import { useContext, type FormEvent, useState, type Dispatch, type SetStateActio
 import { ModalContextProvider } from '../../../contexts/ModalsContext';
 import { trpc } from '../../../utils/trpc';
 import DashboardRightPanel from '../../common/DashboardRightPanel';
-import LeaveRequestFormContainer from '../../common/LeaveRequestForm/LeaveRequestFormContainer';
+import LeaveRequestFormContainer from "../../LeaveRequestManager/LeaveRequestForm/LeaveRequestFormContainer";
 import ListItemCard from '../../common/ListItemCard';
 import MetricsCard from "../../common/MetricsCard";
 

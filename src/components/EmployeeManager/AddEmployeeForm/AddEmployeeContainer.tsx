@@ -36,8 +36,7 @@ const AddEmployeeContainer = ({refetchEmployees}:AddEmployeeProps) => {
       employeeName &&
       employeeEmail &&
       employeeEmploymentDate &&
-      session?.user?.org_id &&
-      leaveDays
+      session?.user?.org_id
     ) {
       addEmployee({
         employee_id: employeeID,
@@ -56,6 +55,13 @@ const AddEmployeeContainer = ({refetchEmployees}:AddEmployeeProps) => {
           : null;
         refetchEmployees();
         setErrors([])
+
+        setEmployeeID("")
+        setEmployeeName("")
+        setEmployeeEmail("")
+        setEmployeeEmploymentDate("")
+        setLeaveDays(0)
+        
       }).catch((e)=>{
         console.error(e)
       });

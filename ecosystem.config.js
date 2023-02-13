@@ -7,7 +7,7 @@ module.exports = {
     production : {
       key: 'key.pem',
       user : 'ubuntu',
-      host : '18.133.139.193',
+      host : '18.132.245.103',
       ref  : 'origin/main',
       repo : 'git@github.com:ImbayaDennis/ems.git',
       path : '/home/ubuntu',

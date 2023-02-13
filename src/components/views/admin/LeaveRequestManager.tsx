@@ -1,9 +1,11 @@
 import Image, { type StaticImageData } from 'next/image'
-import React from 'react'
+import {useContext} from 'react'
 import { trpc } from '../../../utils/trpc'
 import img from "../../../assets/images/blank-profile-picture.jpg"
 import { HiCheck, HiX } from "react-icons/hi";
 import Loader from "../../common/Loader";
+import { ModalContextProvider } from '../../../contexts/ModalsContext';
+import LeaveTypeContainer from '../../LeaveRequestManager/LeaveTypeForm/LeaveTypeContainer';
 
 const LeaveRequestManager = () => {
   const {
@@ -14,6 +16,17 @@ const LeaveRequestManager = () => {
   const {
     data: approvedRequests
   } =trpc.leaveManagement.getEmployeesOnLeave.useQuery();
+  const modalContext = useContext(ModalContextProvider);
+
+  const openAddLeaveTypeModal = () => {
+    if (modalContext.setModals) {
+      modalContext.setModals((prev) => ({
+        ...prev,
+        createLeaveType: { isOpen: true },
+      }));
+    }
+  };
+
   if (isLoading) {
     return (
       <table className="w-full">
@@ -113,6 +126,13 @@ const LeaveRequestManager = () => {
           ))}
         </tbody>
       </table>
+      <LeaveTypeContainer />
+      <button
+        onClick={openAddLeaveTypeModal}
+        className="btn-1 fixed bottom-8 left-1/2 w-1/3 -translate-x-1/2"
+      >
+        Add Leave Type
+      </button>
     </div>
   );
 };
