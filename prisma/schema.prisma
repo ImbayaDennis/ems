@@ -30,7 +30,7 @@ model LeaveType {
 
 model LeaveRequests {
   id            String    @id @default(cuid())
-  employee_id       String    @unique
+  employee_id   String    @unique
   leave_type_id String?
   start_date    String?
   end_date      String?
@@ -45,7 +45,7 @@ model LeaveRequests {
 model RequestApproved {
   id            String    @id @default(cuid())
   leave_type_id String?
-  employee_id       String
+  employee_id   String
   start_date    String?
   end_date      String?
   still_on_leave Boolean? @default(true)
@@ -60,10 +60,10 @@ model RequestApproved {
 model RequestRejected {
   id            String    @id @default(cuid())
   leave_type_id String?
-  employee_id       String
+  employee_id   String
   start_date    String?
   end_date      String?
-  employee      Employee      @relation(fields: [employee_id], references: [id])
+  employee      Employee   @relation(fields: [employee_id], references: [id])
   leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id])
 
   @@index([leave_type_id])
