@@ -1,34 +1,37 @@
-import {useContext, ReactNode} from 'react'
-import { ModalContextProvider } from '../../../contexts/ModalsContext'
-import Modal from './Modal'
+import { useContext, ReactNode, useEffect } from "react";
+import { ModalContextProvider } from "../../../contexts/ModalsContext";
+import Modal from "./Modal";
 
 type Props = {
-    children: ReactNode;
-    modal: "createLeaveRequest"
-}
+  children: ReactNode;
+  modal: "createLeaveRequest" | "createEmployee";
+};
 
-const ModalContainer = ({children, modal}: Props) => {
-    
-  const modalContext = useContext(ModalContextProvider)
+const ModalContainer = ({ children, modal }: Props) => {
+  const modalContext = useContext(ModalContextProvider);
 
-  const closeModal = () =>{
-    if(modalContext.setModals){
-      modalContext.setModals((prev)=> ({ ...prev, createLeaveRequest: {isOpen: false}}))
+  useEffect(() => {
+    addEventListener("keydown", (e) => {
+      if (e.code === "Escape") {
+        closeModal();
+      }
+    });
+  }, []);
+
+  const closeModal = () => {
+    if (modalContext.setModals) {
+      modalContext.setModals((prev) => ({
+        ...prev,
+        createLeaveRequest: { isOpen: false },
+        createEmployee: { isOpen: false },
+      }));
     }
+  };
+
+  if (modalContext?.modals && modalContext?.modals[modal].isOpen) {
+    return <Modal closeModal={closeModal}>{children}</Modal>;
   }
+  return <></>;
+};
 
-  addEventListener('keydown', (e)=>{
-   if(e.code === "Escape"){
-    closeModal()
-   }
-  })
-
-  if(modalContext?.modals && modalContext?.modals[modal].isOpen){
-    return (
-      <Modal closeModal={closeModal}>{children}</Modal>
-    )
-  }
-  return<></>
-}
-
-export default ModalContainer
+export default ModalContainer;

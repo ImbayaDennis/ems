@@ -75,7 +75,8 @@ model Employee {
   employee_id   String? @unique
   name          String?
   email         String? @unique
-  org_id        String? @unique
+  employed_on   String?
+  org_id        String?
   leave_days    Int?
   leave_bal     Int?
   user          User?

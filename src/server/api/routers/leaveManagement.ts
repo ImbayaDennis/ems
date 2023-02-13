@@ -11,7 +11,7 @@ export const leaveManagement = createTRPCRouter({
   getLeaveRequest: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.leaveRequests.findUnique({
       where: { employee_id: ctx.session.user.employee_id },
-      include: { employee: { select: { user: true } } },
+      include: { employee: { include: { user: true } } },
     });
   }),
   getEmployeesOnLeave: adminProcedure.query(async ({ ctx }) => {
@@ -19,7 +19,7 @@ export const leaveManagement = createTRPCRouter({
       where: { still_on_leave: true },
       include: {
         leave_type: true,
-        employee: true,
+        employee: {include: {user: true}},
       },
     });
   }),
@@ -71,25 +71,35 @@ export const leaveManagement = createTRPCRouter({
           where: { employee_id: user?.Employee?.employee_id || undefined },
           data: { leave_bal: { decrement: leaveData.leave_days || 0 } },
         }),
-      ]);
+      ]).catch((e)=>{
+        console.error(e)
+      });
     }),
   rejectLeaveRequest: adminProcedure
     .input(z.object({ leaveRequestId: z.string(), approved: z.boolean() }))
     .mutation(async ({ ctx, input }) => {
-      const leaveData = await ctx.prisma.leaveRequests.delete({
-        where: {
-          id: input.leaveRequestId,
-        },
-      });
+      await ctx.prisma.leaveRequests
+        .delete({
+          where: {
+            id: input.leaveRequestId,
+          },
+        })
+        .then((leaveData) => {
+          ctx.prisma.requestRejected.create({
+            data: {
+              employee_id: leaveData.employee_id,
+              leave_type_id: leaveData.leave_type_id,
+              start_date: leaveData.start_date,
+              end_date: leaveData.end_date,
+            },
+          }).catch((e)=>{
+            console.error(e)
+          });
+        }).catch((e)=>{
+          console.error(e)
+        });
 
-      ctx.prisma.requestRejected.create({
-        data: {
-          employee_id: leaveData.employee_id,
-          leave_type_id: leaveData.leave_type_id,
-          start_date: leaveData.start_date,
-          end_date: leaveData.end_date,
-        },
-      });
+      
     }),
   revertLeaveStatus: adminProcedure
     .input(z.object({ approvedLeaveId: z.string() }))
@@ -97,6 +107,8 @@ export const leaveManagement = createTRPCRouter({
       ctx.prisma.requestApproved.update({
         where: { id: input.approvedLeaveId },
         data: { still_on_leave: false },
+      }).catch((e)=>{
+        console.error(e)
       });
     }),
   getLeaveTypes: protectedProcedure.query(async ({ ctx }) => {

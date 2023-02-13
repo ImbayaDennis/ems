@@ -1,13 +1,11 @@
 import React from 'react'
 
-type Props = {}
-
-const Loader = (props: Props) => {
+const Loader = () => {
   return (
     <div role="status">
       <svg
         aria-hidden="true"
-        className="mr-2 h-8 w-8 animate-spin fill-orange-600 text-gray-200 dark:text-gray-600"
+        className="p-1 h-8 w-8 animate-spin fill-orange-600 text-gray-200 dark:text-gray-600"
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

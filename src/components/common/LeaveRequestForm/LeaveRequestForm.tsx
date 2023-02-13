@@ -40,13 +40,13 @@ const LeaveRequestForm = ({
             Leave-types
           </label>
           <Listbox value={leaveType} onChange={setLeaveType}>
-            <Listbox.Button className="w-full bg-slate-700 p-2 rounded-sm">{leaveTypes.at(0)?.leave_type}</Listbox.Button>
+            <Listbox.Button className="w-full dark:bg-slate-700 bg-slate-300 p-2 rounded-sm">{leaveTypes.at(0)?.leave_type}</Listbox.Button>
             <Listbox.Options className="w-full">
               {leaveTypes.map((leave) => (
                 <Listbox.Option
                   key={leave.id}
                   value={leave}
-                  className="w-full p-2 my-1 rounded-sm text-center bg-slate-600"
+                  className="w-full p-2 my-1 rounded-sm text-center dark:bg-slate-600 bg-slate-200"
                 >
                   {leave.leave_type}
                 </Listbox.Option>

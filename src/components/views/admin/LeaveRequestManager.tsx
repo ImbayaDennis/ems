@@ -66,8 +66,8 @@ const LeaveRequestManager = () => {
               refetch={() => {
                 refetch().catch((e) => console.error(e));
               }}
-              image={request.user.image || img}
-              column1={request.user.name}
+              image={request.employee?.user?.image || img}
+              column1={request.employee.name}
               column2={request.leave_type?.leave_type}
               column3={request.start_date}
               column4={request.end_date}
@@ -104,8 +104,8 @@ const LeaveRequestManager = () => {
               refetch={() => {
                 refetch().catch((e) => console.error(e));
               }}
-              image={request.user.image || img}
-              column1={request.user.name}
+              image={request.employee?.user?.image || img}
+              column1={request.employee.name}
               column2={request.leave_type?.leave_type}
               column3={request.start_date}
               column4={request.end_date}

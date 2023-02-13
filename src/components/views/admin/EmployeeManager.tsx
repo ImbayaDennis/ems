@@ -1,8 +1,11 @@
 import Image, { type StaticImageData } from 'next/image'
-import { HiX } from 'react-icons/hi'
-import img from '../../../assets/images/blank-profile-picture.jpg'
-import { trpc } from '../../../utils/trpc'
+import { useContext } from "react";
+import { HiX } from "react-icons/hi";
+import img from "../../../assets/images/blank-profile-picture.jpg";
+import { ModalContextProvider } from "../../../contexts/ModalsContext";
+import { trpc } from "../../../utils/trpc";
 import Loader from "../../common/Loader";
+import AddEmployeeContainer from "../../EmployeeManager/AddEmployeeForm/AddEmployeeContainer";
 
 const EmployeeManager = () => {
   const {
@@ -12,6 +15,16 @@ const EmployeeManager = () => {
   } = trpc.employees.getEmployees.useQuery();
   const { data: employeesOnLeave } =
     trpc.leaveManagement.getEmployeesOnLeave.useQuery();
+  const modalContext = useContext(ModalContextProvider);
+
+  const openAddEmployeeModal = () => {
+    if (modalContext.setModals) {
+      modalContext.setModals((prev) => ({
+        ...prev,
+        createEmployee: { isOpen: true },
+      }));
+    }
+  };
 
   if (isLoading) {
     return (
@@ -34,7 +47,7 @@ const EmployeeManager = () => {
     );
   }
   return (
-    <div>
+    <div className="flex w-full">
       <table className="w-full">
         <thead className="w-full">
           <tr>
@@ -71,8 +84,8 @@ const EmployeeManager = () => {
               column4={employee.user?.role}
               column5={
                 employeesOnLeave?.filter(
-                  (x) => x.user_id === employee.user?.id
-                )[0]?.approved
+                  (x) => x.employee_id === employee.employee_id
+                )[0]
                   ? "On leave"
                   : "Active"
               }
@@ -80,11 +93,24 @@ const EmployeeManager = () => {
           ))}
         </tbody>
       </table>
+      <AddEmployeeContainer
+        refetchEmployees={() => {
+          refetch().catch((e) => {
+            console.error(e);
+          });
+        }}
+      />
+      <button
+        onClick={openAddEmployeeModal}
+        className="btn-1 fixed bottom-8 left-1/2 w-1/3 -translate-x-1/2"
+      >
+        Add Employee
+      </button>
     </div>
   );
 };
 
-export default EmployeeManager
+export default EmployeeManager;
 
 type ListItemProps = {
   image?: string | StaticImageData;
@@ -108,8 +134,7 @@ const ListItem = ({
   employee_id,
   refetch,
 }: ListItemProps) => {
-  const removeEmployee =
-    trpc.employees.removeEmployee.useMutation();
+  const removeEmployee = trpc.employees.removeEmployee.useMutation();
   return (
     <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-100 p-2 text-slate-600 dark:bg-slate-500 dark:text-slate-50">
       <td className="p-2">
@@ -117,19 +142,19 @@ const ListItem = ({
           <Image src={image} width={48} height={48} alt="profile-img" />
         </div>
       </td>
-      <td className="w-36 p-2 overflow-hidden text-sm">
+      <td className="w-36 overflow-hidden p-2 text-sm">
         <p>{column1}</p>
       </td>
-      <td className="w-36 p-2 overflow-hidden text-sm">
+      <td className="w-36 overflow-hidden p-2 text-sm">
         <p>{column2}</p>
       </td>
-      <td className="w-36 p-2 overflow-hidden text-sm">
+      <td className="w-36 overflow-hidden p-2 text-sm">
         <p>{column3}</p>
       </td>
-      <td className="w-36 p-2 overflow-hidden text-sm">
+      <td className="w-36 overflow-hidden p-2 text-sm">
         <p>{column4}</p>
       </td>
-      <td className="w-36 p-2 overflow-hidden text-sm">
+      <td className="w-36 overflow-hidden p-2 text-sm">
         <p>{column5}</p>
       </td>
       <td className="flex w-36 justify-center p-2">
@@ -145,7 +170,7 @@ const ListItem = ({
             }}
             className="btn-1 flex h-8 w-10 items-center justify-center"
           >
-            <HiX />
+            {removeEmployee.isLoading ? <Loader /> : <HiX />}
           </button>
         </div>
       </td>

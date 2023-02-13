@@ -11,6 +11,7 @@ const AdminHomePage = () => {
   const { data: session } = useSession();
   const { data: leaveRequestData, refetch } =
     trpc.leaveManagement.getLeaveRequest.useQuery();
+  const {data: employee, isLoading} = trpc.employees.getEmployee.useQuery()
   const modalContext = useContext(ModalContextProvider);
 
   const openLeaveReqModal = () => {
@@ -31,8 +32,11 @@ const AdminHomePage = () => {
         <div className="my-4 flex h-fit max-h-[calc(100vh-10rem)] w-full flex-col items-start p-2 md:w-1/2">
           <MetricsCard
             metric_one_label="Total leave days"
+            metric_one={employee?.leave_bal || 0}
             metric_two_label="Entitled leave days"
+            metric_two={employee?.leave_days || 0}
             metric_three_label="Earned leave days"
+            isLoading={isLoading}
           />
           {/* <ListItemCard
             title="Leave Requests"
