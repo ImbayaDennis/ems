@@ -23,7 +23,7 @@ const AddEmployeeContainer = ({refetchEmployees}:AddEmployeeProps) => {
 
   const calculateLeaveDays = () => {
     const employedFor = moment().diff(employeeEmploymentDate, "years")
-    if (employedFor >= 1) {
+    if (employedFor > 0) {
       setLeaveDays(30);
     }
   };
@@ -42,7 +42,6 @@ const AddEmployeeContainer = ({refetchEmployees}:AddEmployeeProps) => {
         employee_id: employeeID,
         name: employeeName,
         email: employeeEmail,
-        org_id: session?.user?.org_id,
         employed_on: employeeEmploymentDate,
         leave_days: leaveDays,
         leave_balance: leaveDays,

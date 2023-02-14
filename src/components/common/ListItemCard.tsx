@@ -1,4 +1,4 @@
-import type { Employee, LeaveRequests, LeaveType } from "@prisma/client";
+import type { Employee, LeaveRequests, LeaveType, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
@@ -13,7 +13,11 @@ type ListCardProps = {
   btn_lbl: string;
   listData?:
     | (LeaveRequests & {
-        employee: Employee;
+        employee:
+          | (Employee & {
+              user: User | null;
+            })
+          | null;
         leave_type: LeaveType | null;
       })[]
     | undefined;
@@ -45,12 +49,12 @@ const ListItemCard = ({
         <tbody className="overflow-x-scroll scrollbar-thin">
           {leaveRequests && leaveRequests.length > 0 ? (
             leaveRequests
-              ?.slice(0, 3)
+              .slice(0, 3)
               .map((request) => (
                 <ListItem
                   key={request.id}
-                  image={request.employee.user?.image}
-                  column1={request.employee.name}
+                  image={request.employee?.user?.image}
+                  column1={request.employee?.name}
                   column2={request.leave_type?.leave_type}
                   column3={request.start_date}
                   column4={request.end_date}

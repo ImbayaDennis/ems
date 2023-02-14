@@ -13,9 +13,8 @@ const LeaveRequestManager = () => {
     refetch,
     isLoading,
   } = trpc.leaveManagement.getLeaveRequests.useQuery();
-  const {
-    data: approvedRequests
-  } =trpc.leaveManagement.getEmployeesOnLeave.useQuery();
+  const { data: approvedRequests, refetch:approvedReqRefetch } =
+    trpc.leaveManagement.getEmployeesOnLeave.useQuery();
   const modalContext = useContext(ModalContextProvider);
 
   const openAddLeaveTypeModal = () => {
@@ -27,15 +26,44 @@ const LeaveRequestManager = () => {
     }
   };
 
+  const { mutateAsync: approveRequest, isLoading: acceptLeaveRequestLoading } =
+    trpc.leaveManagement.approveLeaveRequest.useMutation();
+  const { mutateAsync: denyRequest, isLoading: denyLeaveRequestLoading } =
+    trpc.leaveManagement.rejectLeaveRequest.useMutation();
+  const { mutateAsync: changeLeaveStatus, isLoading: revokeLeaveStatusLoading } =
+    trpc.leaveManagement.revertLeaveStatus.useMutation();
+
+  const acceptLeaveRequest = (requestID: string) => {
+    approveRequest({ leaveRequestId: requestID })
+      .then(() => {
+        refetch()
+        approvedReqRefetch()
+      })
+      .catch((e) => console.error(e));
+  };
+
+  const denyLeaveRequest = (requestID: string) => {
+    denyRequest({ leaveRequestId: requestID })
+      .then(() => approvedReqRefetch())
+      .catch((e) => console.error(e));
+  };
+
+  const revokeLeaveStatus = (approvedID: string) => {
+    changeLeaveStatus({ approvedLeaveId: approvedID })
+      .then(() => {
+        refetch()
+        approvedReqRefetch()
+      })
+      .catch((e) => console.error(e));
+  };
+
   if (isLoading) {
     return (
       <table className="w-full">
-        <thead className='w-full'>
+        <thead className="w-full">
           <tr>
             <td>
-              <p className="my-8 w-full text-2xl">
-                Leave Requests
-              </p>
+              <p className="my-8 w-full text-2xl">Leave Requests</p>
             </td>
           </tr>
         </thead>
@@ -73,17 +101,18 @@ const LeaveRequestManager = () => {
         </thead>
         <tbody>
           {leaveRequests?.map((request) => (
-            <ListItem
+            <RequestListItem
               key={request.id}
               request_id={request.id}
-              refetch={() => {
-                refetch().catch((e) => console.error(e));
-              }}
               image={request.employee?.user?.image || img}
-              column1={request.employee.name}
+              column1={request.employee?.name}
               column2={request.leave_type?.leave_type}
               column3={request.start_date}
               column4={request.end_date}
+              acceptLeaveRequest={acceptLeaveRequest}
+              acceptLeaveRequestLoading={acceptLeaveRequestLoading}
+              denytLeaveRequest={denyLeaveRequest}
+              denyLeaveRequestLoading={denyLeaveRequestLoading}
             />
           ))}
         </tbody>
@@ -105,23 +134,22 @@ const LeaveRequestManager = () => {
             <td className="w-36 p-2">Start date</td>
             <td className="w-36 p-2">Return date</td>
             <td className="w-36 p-2">
-              <p className="text-center">Approve</p>
+              <p className="text-center">Revoke</p>
             </td>
           </tr>
         </thead>
         <tbody>
           {approvedRequests?.map((request) => (
-            <ListItem
+            <ApprovedListItem
               key={request.id}
               request_id={request.id}
-              refetch={() => {
-                refetch().catch((e) => console.error(e));
-              }}
               image={request.employee?.user?.image || img}
-              column1={request.employee.name}
+              column1={request.employee?.name}
               column2={request.leave_type?.leave_type}
               column3={request.start_date}
               column4={request.end_date}
+              revokeLeaveStatus={revokeLeaveStatus}
+              revokeLeaveStatusLoading={revokeLeaveStatusLoading}
             />
           ))}
         </tbody>
@@ -139,7 +167,7 @@ const LeaveRequestManager = () => {
 
 export default LeaveRequestManager;
 
-type ListItemProps = {
+type RequestsListItemProps = {
   image?: string | StaticImageData;
   column1?: string | number | null;
   column2?: string | number | null;
@@ -148,21 +176,36 @@ type ListItemProps = {
   column5?: string | number | null;
   column6?: string | number | null;
   request_id: string;
-  refetch: () => void;
+  acceptLeaveRequest?: (requestID: string) => void;
+  acceptLeaveRequestLoading?: boolean;
+  denytLeaveRequest?: (requestID: string) => void;
+  denyLeaveRequestLoading?: boolean;
+};
+type ApprovedListItemProps = {
+  image?: string | StaticImageData;
+  column1?: string | number | null;
+  column2?: string | number | null;
+  column3?: string | number | null;
+  column4?: string | number | null;
+  column5?: string | number | null;
+  column6?: string | number | null;
+  request_id: string;
+  revokeLeaveStatus?: (requestID: string) => void;
+  revokeLeaveStatusLoading?: boolean | "null";
 };
 
-const ListItem = ({
+const RequestListItem = ({
   image = img,
   column1 = "column1",
   column2 = "column2",
   column3 = "column3",
   column4 = "column4",
   request_id,
-  refetch,
-}: ListItemProps) => {
-  const leaveRequestApproval =
-    trpc.leaveManagement.approveLeaveRequest.useMutation();
-
+  acceptLeaveRequest,
+  denytLeaveRequest: denyLeaveRequest,
+  acceptLeaveRequestLoading,
+  denyLeaveRequestLoading,
+}: RequestsListItemProps) => {
   return (
     <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-100 p-2 text-slate-600 dark:bg-slate-500 dark:text-slate-50">
       <td className="p-2">
@@ -184,33 +227,83 @@ const ListItem = ({
       </td>
       <td className="flex w-36 justify-center p-2">
         <div className="flex">
+          {acceptLeaveRequest?
+          (<button
+            onClick={() => {
+              acceptLeaveRequest ? acceptLeaveRequest(request_id) : null;
+            }}
+            className="btn-1 flex h-10 w-10 items-center justify-center"
+          >{
+            acceptLeaveRequestLoading
+            ? <Loader />
+            : <HiCheck />
+          }
+          </button>)
+          : null}
           <button
             onClick={() => {
-              leaveRequestApproval
-                .mutateAsync({
-                  leaveRequestId: request_id,
-                  approved: true,
-                })
-                .then(() => refetch())
-                .catch((e) => console.error(e));
+              denyLeaveRequest
+                ? denyLeaveRequest(request_id)
+                : null;
             }}
-            className="btn-1 flex h-8 w-10 items-center justify-center"
+            className="btn-1 flex h-10 w-10 items-center justify-center"
           >
-            <HiCheck />
+            {
+              denyLeaveRequestLoading
+              ? <Loader />
+              : <HiX />
+            }
           </button>
+        </div>
+      </td>
+    </tr>
+  );
+};
+const ApprovedListItem = ({
+  image = img,
+  column1 = "column1",
+  column2 = "column2",
+  column3 = "column3",
+  column4 = "column4",
+  request_id,
+  revokeLeaveStatus,
+  revokeLeaveStatusLoading
+}: ApprovedListItemProps) => {
+  return (
+    <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-100 p-2 text-slate-600 dark:bg-slate-500 dark:text-slate-50">
+      <td className="p-2">
+        <div className="h-8 w-8 overflow-hidden rounded-full bg-slate-300">
+          <Image src={image} width={48} height={48} alt="profile-img" />
+        </div>
+      </td>
+      <td className="w-36 p-2 text-sm">
+        <p>{column1}</p>
+      </td>
+      <td className="w-36 p-2 text-sm">
+        <p>{column2}</p>
+      </td>
+      <td className="w-36 p-2 text-sm">
+        <p>{column3}</p>
+      </td>
+      <td className="w-36 p-2 text-sm">
+        <p>{column4}</p>
+      </td>
+      <td className="flex w-36 justify-center p-2">
+        <div className="flex">
+          
           <button
             onClick={() => {
-              leaveRequestApproval
-                .mutateAsync({
-                  leaveRequestId: request_id,
-                  approved: false,
-                })
-                .then(() => refetch())
-                .catch((e) => console.error(e));
+            revokeLeaveStatus
+                ? revokeLeaveStatus(request_id)
+                : null;
             }}
-            className="btn-1 flex h-8 w-10 items-center justify-center"
+            className="btn-1 flex h-10 w-10 items-center justify-center"
           >
-            <HiX />
+            {
+             revokeLeaveStatusLoading
+              ? <Loader />
+              : <HiX />
+            }
           </button>
         </div>
       </td>

@@ -13,7 +13,8 @@ const AdminHomePage = () => {
 
   const {data: employees, isLoading: employeesLoading} = trpc.employees.getEmployees.useQuery()
   const {data: employeesOnLeave, isLoading: employeesOnLeaveLoading} = trpc.leaveManagement.getEmployeesOnLeave.useQuery()
-  const {data: leaveRequestData, isLoading: leaveRequestDataLoading, refetch} = trpc.leaveManagement.getLeaveRequests.useQuery()
+  const {data: employeeOnLeave, isLoading: employeeOnLeaveLoading} = trpc.leaveManagement.getEmployeeOnLeave.useQuery()
+  const {data: leaveRequests, isLoading: leaveRequestDataLoading, refetch} = trpc.leaveManagement.getLeaveRequests.useQuery()
   const {data: leaveRequest, isLoading:leaveRequestLoading } = trpc.leaveManagement.getLeaveRequest.useQuery()
   const modalContext = useContext(ModalContextProvider);
 
@@ -27,7 +28,7 @@ const AdminHomePage = () => {
 
   return (
     <div className="h-full w-full">
-      <h1 className="my-8 mx-4 text-2xl text-start">
+      <h1 className="my-8 mx-4 text-start text-2xl">
         Welcome, {session?.user?.name || "[Admin name]"}
       </h1>
       <div className="flex h-full w-full flex-wrap gap-16">
@@ -37,14 +38,16 @@ const AdminHomePage = () => {
             metric_one_label="Total Employees"
             metric_two={employeesOnLeave?.length}
             metric_two_label="Employees on leave"
-            metric_three={(employees?.length || 0) - (employeesOnLeave?.length || 0)}
+            metric_three={
+              (employees?.length || 0) - (employeesOnLeave?.length || 0)
+            }
             metric_three_label="Active Employees"
             isLoading={employeesLoading}
           />
           <ListItemCard
             title="Leave Requests"
             btn_lbl="See all requests"
-            listData={leaveRequestData}
+            listData={leaveRequests}
           />
           <LeaveRequestFormContainer
             refetchLeaveRequests={() => {
@@ -53,7 +56,8 @@ const AdminHomePage = () => {
           />
         </div>
         <DashboardRightPanel
-          leaveRequestData={leaveRequest}
+          leaveRequest={leaveRequest}
+          leaveApproved={employeeOnLeave}
           openLeaveReqModal={openLeaveReqModal}
         />
       </div>

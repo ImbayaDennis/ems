@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure, adminProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc";
 
 export const employees = createTRPCRouter({
   getEmployees: adminProcedure.query(async ({ ctx }) => {
@@ -22,7 +22,6 @@ export const employees = createTRPCRouter({
         name: z.string(),
         email: z.string(),
         employed_on: z.string(),
-        org_id: z.string(),
         leave_days: z.number(),
         leave_balance: z.number(),
       })
@@ -35,8 +34,8 @@ export const employees = createTRPCRouter({
           email: input.email,
           employed_on: input.employed_on,
           org_id: ctx.session.user.org_id,
-          leave_days: 0,
-          leave_bal: 0,
+          leave_days: input.leave_days,
+          leave_bal: input.leave_balance,
         },
       });
     }),

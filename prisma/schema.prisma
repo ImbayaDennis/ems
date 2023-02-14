@@ -20,9 +20,9 @@ datasource db {
 
 model LeaveType {
   id            String          @id @default(cuid())
-  leave_type    String
-  leave_desc    String
-  leave_days    Int
+  leave_type    String?
+  leave_desc    String?
+  leave_days    Int?
   leaveRequests LeaveRequests[]
   requestApproved RequestApproved[]
   requestRejected RequestRejected[]
@@ -35,8 +35,8 @@ model LeaveRequests {
   start_date    String?
   end_date      String?
   leave_days    Int?
-  employee      Employee      @relation(fields: [employee_id], references: [id])
-  leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id])
+  employee      Employee?   @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
+  leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id], onDelete: Cascade)
 
   @@index([leave_type_id])
   @@index([employee_id])
@@ -50,8 +50,8 @@ model RequestApproved {
   end_date      String?
   still_on_leave Boolean? @default(true)
   return_date   String?
-  employee      Employee      @relation(fields: [employee_id], references: [id])
-  leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id])
+  employee      Employee?      @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
+  leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id], onDelete: Cascade)
 
   @@index([leave_type_id])
   @@index([employee_id])
@@ -63,8 +63,8 @@ model RequestRejected {
   employee_id   String
   start_date    String?
   end_date      String?
-  employee      Employee   @relation(fields: [employee_id], references: [id])
-  leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id])
+  employee      Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id], onDelete: Cascade)
 
   @@index([leave_type_id])
   @@index([employee_id])
@@ -134,7 +134,7 @@ model User {
   org_id        String?
   accounts      Account?
   sessions      Session[]
-  Employee      Employee? @relation(fields: [email], references: [email], onDelete: Cascade)
+  Employee      Employee? @relation(fields: [email], references: [email])
 
   @@index([email])
   @@index([org_id])

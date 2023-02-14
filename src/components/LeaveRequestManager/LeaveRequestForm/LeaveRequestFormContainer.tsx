@@ -1,7 +1,7 @@
 import { LeaveType } from '@prisma/client';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
-import { type FormEvent, useState, useContext } from 'react'
+import { type FormEvent, useState, useContext, useEffect } from 'react'
 import { ModalContextProvider } from '../../../contexts/ModalsContext';
 import { trpc } from '../../../utils/trpc';
 import LeaveRequestForm from './LeaveRequestForm'
@@ -20,12 +20,24 @@ const LeaveRequestFormContainer = ({refetchLeaveRequests}: Props) => {
       
       const [startDate, setStartDate] = useState<string>("");
       const [endDate, setEndDate] = useState<string>("");
-      const [leaveType, setLeaveType] = useState<LeaveType | undefined>(leaveTypes?.at(0));
+      const [leaveType, setLeaveType] = useState<LeaveType | undefined>();
+
+      useEffect(()=>{
+        setLeaveType(leaveTypes?.at(0))
+      },[leaveTypes])
+
+      const calculateLeaveEndDate = () => {
+        leaveType &&
+          setEndDate(
+            moment()
+              .add(leaveType.leave_days, "days")
+              .calendar({sameElse: "YYYY-MM-DD"})
+          );
+      }
 
       const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        leaveType && setEndDate((moment().add(leaveType.leave_days, 'days').calendar().replaceAll("/", "-")))
-
+        calculateLeaveEndDate();
         if (session?.user && startDate && endDate && leaveType) {
           leaveRequest
             .mutateAsync({
@@ -34,7 +46,15 @@ const LeaveRequestFormContainer = ({refetchLeaveRequests}: Props) => {
               startDate,
               endDate,
             })
-            .then(() => refetchLeaveRequests())
+            .then(() => {
+              setModals
+                ? setModals((prev) => ({
+                    ...prev,
+                    createLeaveRequest: { isOpen: false },
+                  }))
+                : null;
+              refetchLeaveRequests()
+            })
             .catch(e=> {
               console.error(e)
             });
@@ -44,15 +64,9 @@ const LeaveRequestFormContainer = ({refetchLeaveRequests}: Props) => {
           console.log("End date: ", endDate)
           console.log("Leave Type: ", leaveType)
         }
-        if(!leaveRequest.isError){
-          console.log("Success")
-          setModals
-            ? setModals((prev) => ({ ...prev, createLeaveRequest: { isOpen: false } }))
-            : null;
-        }
       };
   return (
-    <LeaveRequestForm handleSubmit={handleSubmit} setStartDate={setStartDate} setEndDate={setEndDate} setLeaveType={setLeaveType} leaveType={leaveType} leaveTypes={leaveTypes || []} />
+    <LeaveRequestForm handleSubmit={handleSubmit} startDate={startDate} setStartDate={setStartDate} setLeaveType={setLeaveType} leaveType={leaveType} calculateLeaveEndDate={calculateLeaveEndDate} leaveTypes={leaveTypes || []} isLoading={leaveRequest.isLoading} />
   )
 }
 
