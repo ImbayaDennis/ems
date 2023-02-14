@@ -37,14 +37,25 @@ const LeaveRequestManager = () => {
     approveRequest({ leaveRequestId: requestID })
       .then(() => {
         refetch()
+        .catch((e)=>{
+          console.error(e)
+        })
         approvedReqRefetch()
+        .catch((e)=>{
+          console.error(e)
+        })
       })
       .catch((e) => console.error(e));
   };
 
   const denyLeaveRequest = (requestID: string) => {
     denyRequest({ leaveRequestId: requestID })
-      .then(() => approvedReqRefetch())
+      .then(() => {
+        approvedReqRefetch()
+        .catch((e)=>{
+          console.error(e)
+        })
+      })
       .catch((e) => console.error(e));
   };
 
@@ -52,7 +63,13 @@ const LeaveRequestManager = () => {
     changeLeaveStatus({ approvedLeaveId: approvedID })
       .then(() => {
         refetch()
+        .catch((e)=>{
+          console.error(e)
+        })
         approvedReqRefetch()
+        .catch((e)=>{
+          console.error(e)
+        })
       })
       .catch((e) => console.error(e));
   };
