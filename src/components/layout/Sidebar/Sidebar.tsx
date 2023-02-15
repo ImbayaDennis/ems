@@ -26,7 +26,7 @@ const Sidebar = ({
 
     return (
       <div
-        className={`z-20 border-r border-r-gray-300 bg-slate-100 dark:border-r-gray-900 dark:bg-slate-800 ${width}  flex h-full flex-col items-center transition-all`}
+        className={`z-10 border-r border-r-gray-300 bg-slate-100 dark:border-r-gray-900 dark:bg-slate-800 ${width}  flex h-full flex-col items-center transition-all`}
       >
         <div
           className={
@@ -80,7 +80,7 @@ const Sidebar = ({
               <span>{isDarkTheme ? <HiSun /> : <HiMoon />} </span>
               <span
                 className={`${
-                  sidebarIsOpen ? "opacity-100" : "opacity-0"
+                  sidebarIsOpen ? "opacity-100" : "opacity-0 hidden"
                 } ml-6 whitespace-nowrap text-base transition-opacity duration-300`}
               >
                 {isDarkTheme ? "Set Light Theme" : "Set Dark Theme"}
