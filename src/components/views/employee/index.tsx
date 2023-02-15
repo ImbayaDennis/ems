@@ -33,10 +33,11 @@ const AdminHomePage = () => {
         <div className="my-4 flex h-fit max-h-[calc(100vh-10rem)] w-full flex-col items-start p-2 md:w-1/2">
           <MetricsCard
             metric_one_label="Total leave balance"
-            metric_one={employee?.leave_bal || 0}
+            metric_one={(employee?.leave_bal || 0) + (employee?.earned_leave || 0)}
             metric_two_label="Entitled leave days"
             metric_two={employee?.leave_days || 0}
             metric_three_label="Earned leave days"
+            metric_three={employee?.earned_leave || 0}
             isLoading={isLoading}
           />
           {/* <ListItemCard

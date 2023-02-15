@@ -96,7 +96,7 @@ const LeaveRequestManager = () => {
   }
   return (
     <div>
-      <table className="w-full">
+      <table className="w-full mb-4">
         <thead className="w-full">
           <tr>
             <td>
@@ -135,7 +135,7 @@ const LeaveRequestManager = () => {
         </tbody>
       </table>
 
-      <table className="w-full">
+      <table className="w-full mb-8">
         <thead className="w-full">
           <tr>
             <td>

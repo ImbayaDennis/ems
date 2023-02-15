@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import React from 'react'
+import spurLogo from "../../../assets/images/spur-logo.png"
 
 type Props = {
   signIn: () => void;
@@ -20,7 +21,7 @@ function Appbar({signIn, signOut, isAuth, imgUrl}: Props) {
     </Head>
     <header className='z-30 w-screen h-12 px-4 text-gray-700 dark:text-gray-400 bg-gray-300 dark:bg-gray-900 flex justify-between items-center shadow-md'>
       <div className="">
-        LOGO
+        <Image src={spurLogo} width={96} height={48} alt="LOGO" className='mix-blend-multiply dark:mix-blend-normal rounded-md' />
       </div>
       <div className="flex items-center">
         {!isAuth ? (<button className='btn-1' onClick={signIn} aria-label='Sign in button'>Sign in</button>) : (<button className='btn-1' onClick={signOut} aria-label='Sign out button'>Sign out</button>)}

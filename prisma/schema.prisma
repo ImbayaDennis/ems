@@ -79,6 +79,7 @@ model Employee {
   org_id        String?
   leave_days    Int?
   leave_bal     Int?
+  earned_leave  Int?
   user          User?
   leaveRequests LeaveRequests?
   requestApproved RequestApproved[]
