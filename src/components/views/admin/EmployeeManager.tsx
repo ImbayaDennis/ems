@@ -48,7 +48,7 @@ const EmployeeManager = () => {
   }
   return (
     <div className="flex w-full">
-      <table className="w-full pb-8">
+      <table className="w-full mb-28">
         <thead className="w-full">
           <tr>
             <td>

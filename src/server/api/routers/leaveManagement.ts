@@ -73,14 +73,6 @@ export const leaveManagement = createTRPCRouter({
                 still_on_leave: true,
               },
             })
-            .then(async () => {
-              await ctx.prisma.employee.update({
-                where: { employee_id: leaveData?.employee_id },
-                data: {
-                  leave_bal: { decrement: leaveData?.leave_days || 0 },
-                },
-              });
-            })
             .then(async() => {
               await ctx.prisma.leaveRequests.delete({
                 where: {id: input.leaveRequestId}
@@ -116,15 +108,26 @@ export const leaveManagement = createTRPCRouter({
         });
     }),
   revertLeaveStatus: adminProcedure
-    .input(z.object({ approvedLeaveId: z.string() }))
+    .input(z.object({ approvedLeaveId: z.string(), returnDate: z.string() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.requestApproved
         .update({
           where: { id: input.approvedLeaveId },
           data: {
             still_on_leave: false,
-            return_date: new Date(Date.now()).toISOString().substring(0, 10),
+            return_date: input.returnDate,
           },
+        })
+        .then((approvedRequest)=>{
+          const startDate = approvedRequest.start_date
+          const endDate = input.returnDate
+
+          const dateDiff = moment(endDate).diff(moment(startDate), "days")
+
+          return ctx.prisma.employee.update({
+            where: {employee_id: approvedRequest.employee_id},
+            data: {leave_bal: {decrement: dateDiff}}
+          })
         })
         .catch((e) => {
           console.error(e);

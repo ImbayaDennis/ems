@@ -4,7 +4,7 @@ import Modal from "./Modal";
 
 type Props = {
   children: ReactNode;
-  modal: "createLeaveRequest" | "createEmployee" | "createLeaveType";
+  modal: "createLeaveRequest" | "createEmployee" | "createLeaveType" | "returnFromLeave";
 };
 
 const ModalContainer = ({ children, modal }: Props) => {
@@ -25,6 +25,7 @@ const ModalContainer = ({ children, modal }: Props) => {
         createLeaveRequest: { isOpen: false },
         createEmployee: { isOpen: false },
         createLeaveType: { isOpen: false },
+        returnFromLeave: { isOpen: false },
       }));
     }
   };

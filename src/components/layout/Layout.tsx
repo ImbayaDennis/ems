@@ -32,7 +32,7 @@ function Layout({ children }: Props) {
           />
         )}
         <main
-          className={`p-2 h-full w-full overflow-scroll bg-gray-100 text-gray-500 scrollbar-thin dark:bg-gray-800 dark:text-gray-300 md:static`}
+          className={`p-2 h-full w-full overflow-scroll bg-gray-100 text-gray-500 scrollbar-thin dark:bg-gray-800 dark:text-gray-300 md:static overflow-y-scroll`}
         >
           {children}
         </main>

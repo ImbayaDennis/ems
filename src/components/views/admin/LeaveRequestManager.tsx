@@ -1,11 +1,12 @@
 import Image, { type StaticImageData } from 'next/image'
-import {useContext} from 'react'
-import { trpc } from '../../../utils/trpc'
-import img from "../../../assets/images/blank-profile-picture.jpg"
-import { HiCheck, HiX } from "react-icons/hi";
+import { useContext, useState } from "react";
+import { trpc } from "../../../utils/trpc";
+import img from "../../../assets/images/blank-profile-picture.jpg";
+import { HiCheck, HiLogin, HiX } from "react-icons/hi";
 import Loader from "../../common/Loader";
-import { ModalContextProvider } from '../../../contexts/ModalsContext';
-import LeaveTypeContainer from '../../LeaveRequestManager/LeaveTypeForm/LeaveTypeContainer';
+import { ModalContextProvider } from "../../../contexts/ModalsContext";
+import LeaveTypeContainer from "../../LeaveRequestManager/LeaveTypeForm/LeaveTypeContainer";
+import LeaveReturnFormContainer from "../../LeaveRequestManager/LeaveReturnForm/LeaveReturnFormContainer";
 
 const LeaveRequestManager = () => {
   const {
@@ -13,9 +14,14 @@ const LeaveRequestManager = () => {
     refetch,
     isLoading,
   } = trpc.leaveManagement.getLeaveRequests.useQuery();
-  const { data: approvedRequests, refetch:approvedReqRefetch } =
-    trpc.leaveManagement.getEmployeesOnLeave.useQuery();
+  const {
+    data: approvedRequests,
+    refetch: approvedReqRefetch,
+    isLoading: approvedRequestsLoading,
+  } = trpc.leaveManagement.getEmployeesOnLeave.useQuery();
   const modalContext = useContext(ModalContextProvider);
+
+  const [requestID, setRequestID] = useState("");
 
   const openAddLeaveTypeModal = () => {
     if (modalContext.setModals) {
@@ -26,24 +32,31 @@ const LeaveRequestManager = () => {
     }
   };
 
+  const openLeaveReturnForm = (request_id: string) => {
+    if (modalContext.setModals) {
+      modalContext.setModals((prev) => ({
+        ...prev,
+        returnFromLeave: { isOpen: true },
+      }));
+    }
+    setRequestID(request_id);
+  };
+
   const { mutateAsync: approveRequest, isLoading: acceptLeaveRequestLoading } =
     trpc.leaveManagement.approveLeaveRequest.useMutation();
   const { mutateAsync: denyRequest, isLoading: denyLeaveRequestLoading } =
     trpc.leaveManagement.rejectLeaveRequest.useMutation();
-  const { mutateAsync: changeLeaveStatus, isLoading: revokeLeaveStatusLoading } =
-    trpc.leaveManagement.revertLeaveStatus.useMutation();
+  const {} = useContext(ModalContextProvider);
 
   const acceptLeaveRequest = (requestID: string) => {
     approveRequest({ leaveRequestId: requestID })
       .then(() => {
-        refetch()
-        .catch((e)=>{
-          console.error(e)
-        })
-        approvedReqRefetch()
-        .catch((e)=>{
-          console.error(e)
-        })
+        refetch().catch((e) => {
+          console.error(e);
+        });
+        approvedReqRefetch().catch((e) => {
+          console.error(e);
+        });
       })
       .catch((e) => console.error(e));
   };
@@ -51,25 +64,9 @@ const LeaveRequestManager = () => {
   const denyLeaveRequest = (requestID: string) => {
     denyRequest({ leaveRequestId: requestID })
       .then(() => {
-        approvedReqRefetch()
-        .catch((e)=>{
-          console.error(e)
-        })
-      })
-      .catch((e) => console.error(e));
-  };
-
-  const revokeLeaveStatus = (approvedID: string) => {
-    changeLeaveStatus({ approvedLeaveId: approvedID })
-      .then(() => {
-        refetch()
-        .catch((e)=>{
-          console.error(e)
-        })
-        approvedReqRefetch()
-        .catch((e)=>{
-          console.error(e)
-        })
+        approvedReqRefetch().catch((e) => {
+          console.error(e);
+        });
       })
       .catch((e) => console.error(e));
   };
@@ -95,8 +92,8 @@ const LeaveRequestManager = () => {
     );
   }
   return (
-    <div>
-      <table className="w-full mb-4">
+    <div className="mb-28">
+      <table className="mb-4 w-full">
         <thead className="w-full">
           <tr>
             <td>
@@ -110,7 +107,6 @@ const LeaveRequestManager = () => {
             <td className="w-36 p-2">Employee name</td>
             <td className="w-36 p-2">Leave type</td>
             <td className="w-36 p-2">Start date</td>
-            <td className="w-36 p-2">Return date</td>
             <td className="w-36 p-2">
               <p className="text-center">Approve</p>
             </td>
@@ -125,17 +121,16 @@ const LeaveRequestManager = () => {
               column1={request.employee?.name}
               column2={request.leave_type?.leave_type}
               column3={request.start_date}
-              column4={request.end_date}
               acceptLeaveRequest={acceptLeaveRequest}
               acceptLeaveRequestLoading={acceptLeaveRequestLoading}
-              denytLeaveRequest={denyLeaveRequest}
+              denyLeaveRequest={denyLeaveRequest}
               denyLeaveRequestLoading={denyLeaveRequestLoading}
             />
           ))}
         </tbody>
       </table>
 
-      <table className="w-full mb-8">
+      <table className="mb-8 w-full">
         <thead className="w-full">
           <tr>
             <td>
@@ -149,9 +144,8 @@ const LeaveRequestManager = () => {
             <td className="w-36 p-2">Employee name</td>
             <td className="w-36 p-2">Leave type</td>
             <td className="w-36 p-2">Start date</td>
-            <td className="w-36 p-2">Return date</td>
             <td className="w-36 p-2">
-              <p className="text-center">Revoke</p>
+              <p className="text-center">Return</p>
             </td>
           </tr>
         </thead>
@@ -164,14 +158,18 @@ const LeaveRequestManager = () => {
               column1={request.employee?.name}
               column2={request.leave_type?.leave_type}
               column3={request.start_date}
-              column4={request.end_date}
-              revokeLeaveStatus={revokeLeaveStatus}
-              revokeLeaveStatusLoading={revokeLeaveStatusLoading}
+              openLeaveReturnForm={openLeaveReturnForm}
             />
           ))}
         </tbody>
       </table>
       <LeaveTypeContainer />
+      <LeaveReturnFormContainer
+        approvedLeaveId={requestID}
+        refetchApprovedLeave={() => {
+          approvedReqRefetch().catch((e) => console.error(e));
+        }}
+      />
       <button
         onClick={openAddLeaveTypeModal}
         className="btn-1 fixed bottom-8 left-1/2 w-1/3 -translate-x-1/2"
@@ -195,20 +193,8 @@ type RequestsListItemProps = {
   request_id: string;
   acceptLeaveRequest?: (requestID: string) => void;
   acceptLeaveRequestLoading?: boolean;
-  denytLeaveRequest?: (requestID: string) => void;
+  denyLeaveRequest?: (requestID: string) => void;
   denyLeaveRequestLoading?: boolean;
-};
-type ApprovedListItemProps = {
-  image?: string | StaticImageData;
-  column1?: string | number | null;
-  column2?: string | number | null;
-  column3?: string | number | null;
-  column4?: string | number | null;
-  column5?: string | number | null;
-  column6?: string | number | null;
-  request_id: string;
-  revokeLeaveStatus?: (requestID: string) => void;
-  revokeLeaveStatusLoading?: boolean | "null";
 };
 
 const RequestListItem = ({
@@ -216,10 +202,9 @@ const RequestListItem = ({
   column1 = "column1",
   column2 = "column2",
   column3 = "column3",
-  column4 = "column4",
   request_id,
   acceptLeaveRequest,
-  denytLeaveRequest: denyLeaveRequest,
+  denyLeaveRequest,
   acceptLeaveRequestLoading,
   denyLeaveRequestLoading,
 }: RequestsListItemProps) => {
@@ -239,52 +224,51 @@ const RequestListItem = ({
       <td className="w-36 p-2 text-sm">
         <p>{column3}</p>
       </td>
-      <td className="w-36 p-2 text-sm">
-        <p>{column4}</p>
-      </td>
       <td className="flex w-36 justify-center p-2">
         <div className="flex">
-          {acceptLeaveRequest?
-          (<button
-            onClick={() => {
-              acceptLeaveRequest ? acceptLeaveRequest(request_id) : null;
-            }}
-            className="btn-1 flex h-10 w-10 items-center justify-center"
-          >{
-            acceptLeaveRequestLoading
-            ? <Loader />
-            : <HiCheck />
-          }
-          </button>)
-          : null}
+          {acceptLeaveRequest ? (
+            <button
+              onClick={() => {
+                acceptLeaveRequest ? acceptLeaveRequest(request_id) : null;
+              }}
+              className="btn-1 flex h-10 w-10 items-center justify-center"
+            >
+              {acceptLeaveRequestLoading ? <Loader /> : <HiCheck />}
+            </button>
+          ) : null}
           <button
             onClick={() => {
-              denyLeaveRequest
-                ? denyLeaveRequest(request_id)
-                : null;
+              denyLeaveRequest ? denyLeaveRequest(request_id) : null;
             }}
             className="btn-1 flex h-10 w-10 items-center justify-center"
           >
-            {
-              denyLeaveRequestLoading
-              ? <Loader />
-              : <HiX />
-            }
+            {denyLeaveRequestLoading ? <Loader /> : <HiX />}
           </button>
         </div>
       </td>
     </tr>
   );
 };
+
+type ApprovedListItemProps = {
+  image?: string | StaticImageData;
+  column1?: string | number | null;
+  column2?: string | number | null;
+  column3?: string | number | null;
+  column4?: string | number | null;
+  column5?: string | number | null;
+  column6?: string | number | null;
+  request_id: string;
+  openLeaveReturnForm: (request_id: string) => void;
+};
+
 const ApprovedListItem = ({
   image = img,
   column1 = "column1",
   column2 = "column2",
   column3 = "column3",
-  column4 = "column4",
   request_id,
-  revokeLeaveStatus,
-  revokeLeaveStatusLoading
+  openLeaveReturnForm,
 }: ApprovedListItemProps) => {
   return (
     <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-100 p-2 text-slate-600 dark:bg-slate-500 dark:text-slate-50">
@@ -302,25 +286,15 @@ const ApprovedListItem = ({
       <td className="w-36 p-2 text-sm">
         <p>{column3}</p>
       </td>
-      <td className="w-36 p-2 text-sm">
-        <p>{column4}</p>
-      </td>
       <td className="flex w-36 justify-center p-2">
         <div className="flex">
-          
           <button
             onClick={() => {
-            revokeLeaveStatus
-                ? revokeLeaveStatus(request_id)
-                : null;
+              openLeaveReturnForm(request_id);
             }}
             className="btn-1 flex h-10 w-10 items-center justify-center"
           >
-            {
-             revokeLeaveStatusLoading
-              ? <Loader />
-              : <HiX />
-            }
+            {<HiLogin />}
           </button>
         </div>
       </td>

@@ -5,16 +5,19 @@ type Props = {
 }
 
 type Modals = {
-    "createLeaveRequest": {
-        isOpen: boolean;
-    };
-    "createEmployee": {
-        isOpen: boolean;
-    };
-    "createLeaveType": {
-        isOpen: boolean;
-    };
-}
+  createLeaveRequest: {
+    isOpen: boolean;
+  };
+  createEmployee: {
+    isOpen: boolean;
+  };
+  createLeaveType: {
+    isOpen: boolean;
+  };
+  returnFromLeave: {
+    isOpen: boolean;
+  };
+};
 
 type ModalsContext = {
     modals?: Modals;
@@ -29,6 +32,7 @@ const ModalsContext = ({children}: Props) => {
     createLeaveRequest: { isOpen: false },
     createEmployee: { isOpen: false },
     createLeaveType: { isOpen: false },
+    returnFromLeave: { isOpen: false },
   });
 
   const value: ModalsContext = {modals, setModals}
