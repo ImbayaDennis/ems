@@ -125,7 +125,7 @@ export const leaveManagement = createTRPCRouter({
             leaveRequest.start_date
           ) {
             handleSendMail({
-              from: "Technisoft HRMS <imbayadennis98@gmail.com>",
+              from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[0]?.email,
               subject: `Leave request by ${employeeData[0].name}`,
               data: {
@@ -138,7 +138,7 @@ export const leaveManagement = createTRPCRouter({
               },
             });
             handleSendMail({
-              from: "Technisoft HRMS <imbayadennis98@gmail.com>",
+              from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[1]?.email,
               subject: `Leave request by ${employeeData[0].name}`,
               data: {
@@ -151,7 +151,7 @@ export const leaveManagement = createTRPCRouter({
               },
             });
             handleSendMail({
-              from: "Technisoft HRMS <imbayadennis98@gmail.com>",
+              from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[2]?.email,
               subject: `Leave request by ${employeeData[0].name}`,
               data: {
@@ -238,7 +238,7 @@ export const leaveManagement = createTRPCRouter({
             leaveRequest.start_date
           ) {
             handleSendMail({
-              from: "Technisoft HRMS <imbayadennis98@gmail.com>",
+              from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[0]?.email,
               subject: `Leave request by ${employeeData[0].name}`,
               data: {
@@ -251,7 +251,7 @@ export const leaveManagement = createTRPCRouter({
               },
             });
             handleSendMail({
-              from: "Technisoft HRMS <imbayadennis98@gmail.com>",
+              from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[1]?.email,
               subject: `Leave request by ${employeeData[0].name}`,
               data: {
@@ -264,7 +264,7 @@ export const leaveManagement = createTRPCRouter({
               },
             });
             handleSendMail({
-              from: "Technisoft HRMS <imbayadennis98@gmail.com>",
+              from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[2]?.email,
               subject: `Leave request by ${employeeData[0].name}`,
               data: {
