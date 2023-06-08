@@ -19,7 +19,7 @@ declare module "next-auth" {
   type UserRole = "owner" | "admin" | "manager" | "employee"
 
   interface Session extends DefaultSession {
-    user: {
+    user?: {
       employee_id: string;
       org_id: string;
       id: string;

@@ -55,7 +55,7 @@ export const leaveManagement = createTRPCRouter({
     });
   }),
   getLeaveDaysTaken: protectedProcedure
-    .input(z.object({ employee_id: z.string() }))
+    .input(z.object({ employee_id: z.string().nullish() }))
     .query(async ({ ctx, input }) => {
       return await ctx.prisma.requestApproved.findMany({
         where: {
@@ -136,7 +136,8 @@ export const leaveManagement = createTRPCRouter({
                 startDate: leaveRequest.start_date,
                 subject: employeeData[3]?.leave_type,
               },
-            });
+            })
+            .catch((e)=>console.error(e));
             handleSendMail({
               from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[1]?.email,
@@ -149,7 +150,7 @@ export const leaveManagement = createTRPCRouter({
                 startDate: leaveRequest.start_date,
                 subject: employeeData[3]?.leave_type,
               },
-            });
+            }).catch((e) => console.error(e));
             handleSendMail({
               from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[2]?.email,
@@ -162,7 +163,7 @@ export const leaveManagement = createTRPCRouter({
                 startDate: leaveRequest.start_date,
                 subject: employeeData[3]?.leave_type,
               },
-            });
+            }).catch((e) => console.error(e));
           } else {
             console.log({
               Error: "Some data is missinmg",
@@ -249,7 +250,7 @@ export const leaveManagement = createTRPCRouter({
                 startDate: leaveRequest.start_date,
                 subject: employeeData[3]?.leave_type,
               },
-            });
+            }).catch((e) => console.error(e));
             handleSendMail({
               from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[1]?.email,
@@ -262,7 +263,7 @@ export const leaveManagement = createTRPCRouter({
                 startDate: leaveRequest.start_date,
                 subject: employeeData[3]?.leave_type,
               },
-            });
+            }).catch((e) => console.error(e));
             handleSendMail({
               from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[2]?.email,
@@ -275,7 +276,7 @@ export const leaveManagement = createTRPCRouter({
                 startDate: leaveRequest.start_date,
                 subject: employeeData[3]?.leave_type,
               },
-            });
+            }).catch((e) => console.error(e));
           } else {
             console.log({
               Error: "Some data is missinmg",
@@ -318,7 +319,6 @@ export const leaveManagement = createTRPCRouter({
               });
             });
         })
-        .then((approvedRequest) => {});
     }),
   rejectLeaveRequest: adminProcedure
     .input(z.object({ leaveRequestId: z.string() }))

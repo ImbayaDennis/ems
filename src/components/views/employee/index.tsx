@@ -18,7 +18,7 @@ const EmployeeHomePage = () => {
   const modalContext = useContext(ModalContextProvider);
   const { data: leaveDaysTaken, isLoading: leaveDaysTakenLoading } =
     api.leaveManagement.getLeaveDaysTaken.useQuery({
-      employee_id: session?.user.employee_id,
+      employee_id: session?.user?.employee_id,
     });
 
   const openLeaveReqModal = () => {
@@ -31,7 +31,7 @@ const EmployeeHomePage = () => {
   };
 
   const calculateLeaveDaysTaken = () => {
-    let totalLeaveDaysTaken: number = 0;
+    let totalLeaveDaysTaken = 0;
     leaveDaysTaken?.map((approvedRequest) =>
       approvedRequest.return_date
         ? (totalLeaveDaysTaken += moment(approvedRequest.return_date).diff(

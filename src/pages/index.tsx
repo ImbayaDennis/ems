@@ -18,7 +18,7 @@ const Home: NextPage = () => {
     return <AuthRedirect />;
   }
 
-  if(session.user.role !== "employee" || null || undefined){
+  if(session.user?.role !== "employee" || null || undefined){
     return (
     <AdminHomePage />
     )

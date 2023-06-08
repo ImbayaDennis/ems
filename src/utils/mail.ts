@@ -37,7 +37,7 @@ const mailTextBuilder: (rawText: {
 
   return rawTextVals
     .map((values) => {
-      return `${keyMap[values[0] as keyof typeof keyMap]}: ${values?.at(1)}`;
+      return `${keyMap[values[0] as keyof typeof keyMap]}: ${values[1]}`;
     })
     .join(",\n\n");
 };
@@ -67,7 +67,7 @@ const mailHtmlBuilder: (rawHtml: {
       .map((values) => {
         return `<h3>${
           keyMap[values[0] as keyof typeof keyMap]
-        }:</h3><br><p>${values?.at(1)}</p><br><br>`;
+        }:</h3><br><p>${values[1]}</p><br><br>`;
       })
       .join("") +
     `</main></body></html>`;

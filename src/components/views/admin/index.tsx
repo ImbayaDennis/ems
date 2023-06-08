@@ -29,7 +29,7 @@ const AdminHomePage = () => {
   } = api.leaveManagement.getLeaveRequests.useQuery();
   const { data: leaveDaysTaken, isLoading: leaveDaysTakenLoading } =
     api.leaveManagement.getLeaveDaysTaken.useQuery({
-      employee_id: session?.user.employee_id || "",
+      employee_id: session?.user?.employee_id || "",
     });
   const modalContext = useContext(ModalContextProvider);
 

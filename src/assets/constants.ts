@@ -55,7 +55,7 @@ export const calculateEarnedLeaveDays = (
 export const calculateLeaveDaysTaken = (
   leaveDaysTaken: RequestApproved[] | undefined
 ) => {
-  let totalLeaveDaysTaken: number = 0;
+  let totalLeaveDaysTaken = 0;
   leaveDaysTaken?.map((approvedRequest) =>
     approvedRequest.return_date && !approvedRequest.still_on_leave
       ? (totalLeaveDaysTaken += moment(approvedRequest.return_date).diff(
