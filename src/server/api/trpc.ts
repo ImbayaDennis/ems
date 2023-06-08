@@ -112,7 +112,13 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 const enforceAdminIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user || ctx.session.user.role !== "admin") {
+  if (
+    !ctx.session ||
+    !ctx.session.user ||
+    ctx.session.user.role === "employee" ||
+    null ||
+    undefined
+  ) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({

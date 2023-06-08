@@ -1,10 +1,11 @@
 import {FormEvent, useContext, useState} from 'react'
 import { ModalContextProvider } from '../../../contexts/ModalsContext'
-import { trpc } from '../../../utils/trpc'
+import { api } from '../../../utils/api'
 import LeaveTypePresentation from './LeaveTypePresentation'
+import { toast } from 'react-toastify'
 
 const LeaveTypeContainer = () => {
-    const{mutateAsync: createLeaveType, isLoading}=trpc.leaveManagement.createLeaveType.useMutation()
+    const{mutateAsync: createLeaveType, isLoading}=api.leaveManagement.createLeaveType.useMutation()
     const{setModals} = useContext(ModalContextProvider)
 
     const [leaveTypeName, setLeaveTypeName] = useState("")
@@ -22,9 +23,11 @@ const LeaveTypeContainer = () => {
                   createLeaveType: { isOpen: false },
                 }))
               : null;
+              toast.success("Leave type created successfully")
           })
           .catch((e)=>{
             console.error(e)
+            toast.error("Leave type not created");
           })
         }
     }

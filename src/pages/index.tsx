@@ -1,22 +1,29 @@
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
-import AdminHomePage from "../components/views/admin";
+import AuthRedirect from "~/components/common/AuthRedirect";
+import Loader from "~/components/common/Loader";
+import AdminHomePage from "~/components/views/admin";
 import EmployeeHomePage from "../components/views/employee";
-import AuthRedirect from "../components/common/AuthRedirect";
 
 const Home: NextPage = () => {
-  const {data: session} = useSession()
+  const {data: session, status} = useSession()
 
-  if(!session){
-    return(
-      <AuthRedirect/>
+  if (status === "loading") {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <Loader />
+      </div>
     );
+  } else if (!session) {
+    return <AuthRedirect />;
   }
 
-  if(session?.user?.role == "admin"){
-    return <AdminHomePage />
-  } else {
-    return <EmployeeHomePage />
+  if(session.user.role !== "employee" || null || undefined){
+    return (
+    <AdminHomePage />
+    )
+    }else{
+    return <EmployeeHomePage/>
   }
 };
 

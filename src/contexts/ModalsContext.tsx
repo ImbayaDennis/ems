@@ -8,7 +8,13 @@ type Modals = {
   createLeaveRequest: {
     isOpen: boolean;
   };
+  createEmployeeLeaveRequest: {
+    isOpen: boolean;
+  };
   createEmployee: {
+    isOpen: boolean;
+  };
+  editEmployee: {
     isOpen: boolean;
   };
   createLeaveType: {
@@ -30,7 +36,9 @@ const ModalsContext = ({children}: Props) => {
 
   const [modals, setModals] = useState<Modals>({
     createLeaveRequest: { isOpen: false },
+    createEmployeeLeaveRequest: { isOpen: false },
     createEmployee: { isOpen: false },
+    editEmployee: { isOpen: false },
     createLeaveType: { isOpen: false },
     returnFromLeave: { isOpen: false },
   });

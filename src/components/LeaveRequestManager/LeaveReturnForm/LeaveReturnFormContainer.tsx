@@ -1,7 +1,8 @@
 import { FormEvent, useState, useContext } from 'react'
 import { ModalContextProvider } from '../../../contexts/ModalsContext'
-import { trpc } from '../../../utils/trpc'
+import { api } from '../../../utils/api'
 import LeaveReturnForm from './LeaveReturnForm'
+import { toast } from 'react-toastify'
 
 type Props = {
   approvedLeaveId: string;
@@ -10,7 +11,7 @@ type Props = {
 
 const LeaveReturnFormContainer = ({approvedLeaveId, refetchApprovedLeave }: Props) => {
     const { mutateAsync: readmitEmployee, isLoading: approvedRequestsLoading } =
-      trpc.leaveManagement.revertLeaveStatus.useMutation();
+      api.leaveManagement.revertLeaveStatus.useMutation();
 
     const [returnDate, setReturnDate] =useState("")
     const {setModals} = useContext(ModalContextProvider)
@@ -27,6 +28,11 @@ const LeaveReturnFormContainer = ({approvedLeaveId, refetchApprovedLeave }: Prop
                     }))
                   : null;
                 refetchApprovedLeave();
+                toast.success("Employee return date recorded")
+            })
+            .catch((e)=>{
+              console.error(e)
+              toast.error("Employee return date not recorded");
             })
         }
     }

@@ -4,26 +4,20 @@ import Modal from "./Modal";
 
 type Props = {
   children: ReactNode;
-  modal: "createLeaveRequest" | "createEmployee" | "createLeaveType" | "returnFromLeave";
+  modal: "createLeaveRequest" | "createEmployeeLeaveRequest" | "createEmployee" | "editEmployee" | "createLeaveType" | "returnFromLeave";
 };
 
 const ModalContainer = ({ children, modal }: Props) => {
   const modalContext = useContext(ModalContextProvider);
-
-  useEffect(() => {
-    addEventListener("keydown", (e) => {
-      if (e.code === "Escape") {
-        closeModal();
-      }
-    });
-  }, []);
 
   const closeModal = () => {
     if (modalContext.setModals) {
       modalContext.setModals((prev) => ({
         ...prev,
         createLeaveRequest: { isOpen: false },
+        createEmployeeLeaveRequest: { isOpen: false },
         createEmployee: { isOpen: false },
+        editEmployee: { isOpen: false },
         createLeaveType: { isOpen: false },
         returnFromLeave: { isOpen: false },
       }));

@@ -1,27 +1,51 @@
-import Image, { type StaticImageData } from 'next/image'
-import { useContext } from "react";
-import { HiX } from "react-icons/hi";
-import img from "../../../assets/images/blank-profile-picture.jpg";
+import { Employee, User } from "@prisma/client";
+import Image, { type StaticImageData } from "next/image";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
+import { HiOutlineLogout, HiPencil, HiX } from "react-icons/hi";
+import img from "~/assets/images/blank-profile-picture.jpg";
 import { ModalContextProvider } from "../../../contexts/ModalsContext";
-import { trpc } from "../../../utils/trpc";
+import { api } from "~/utils/api";
 import Loader from "../../common/Loader";
 import AddEmployeeContainer from "../../EmployeeManager/AddEmployeeForm/AddEmployeeContainer";
+import EditEmployeeContainer from "../../EmployeeManager/EditEmployeeForm/EditEmployeeContainer";
+import EmployeeLeaveRequestFormContainer from "../../EmployeeManager/EmployeeLeaveRequestForm/EmployeeLeaveRequestFormContainer";
 
 const EmployeeManager = () => {
   const {
     data: employees,
     refetch,
     isLoading,
-  } = trpc.employees.getEmployees.useQuery();
+  } = api.employees.getEmployees.useQuery();
   const { data: employeesOnLeave } =
-    trpc.leaveManagement.getEmployeesOnLeave.useQuery();
-  const modalContext = useContext(ModalContextProvider);
+    api.leaveManagement.getEmployeesOnLeave.useQuery();
+  const { data: leaveRequests, refetch: refetchLeaveRequests } =
+    api.leaveManagement.getLeaveRequests.useQuery();
+  const { setModals } = useContext(ModalContextProvider);
+
+  const [currentEmployee, setCurrentEmployee] = useState(employees?.at(0));
 
   const openAddEmployeeModal = () => {
-    if (modalContext.setModals) {
-      modalContext.setModals((prev) => ({
+    if (setModals) {
+      setModals((prev) => ({
         ...prev,
         createEmployee: { isOpen: true },
+      }));
+    }
+  };
+  const openEditEmployeeModal = () => {
+    if (setModals) {
+      setModals((prev) => ({
+        ...prev,
+        editEmployee: { isOpen: true },
+      }));
+    }
+  };
+
+  const openRequestEmployeeLeaveModal = () => {
+    if (setModals) {
+      setModals((prev) => ({
+        ...prev,
+        createEmployeeLeaveRequest: { isOpen: true },
       }));
     }
   };
@@ -48,7 +72,7 @@ const EmployeeManager = () => {
   }
   return (
     <div className="flex w-full">
-      <table className="w-full mb-28">
+      <table className="mb-28 w-full">
         <thead className="w-full">
           <tr>
             <td>
@@ -65,7 +89,7 @@ const EmployeeManager = () => {
             <td className="w-36 p-2">Role</td>
             <td className="w-36 p-2">On leave</td>
             <td className="w-36 p-2">
-              <p className="text-center">Remove</p>
+              <p className="text-center">Manage</p>
             </td>
           </tr>
         </thead>
@@ -73,10 +97,12 @@ const EmployeeManager = () => {
           {employees?.map((employee) => (
             <ListItem
               key={employee.id}
-              employee_id={employee.employee_id || ""}
+              employee={employee}
               refetch={() => {
                 refetch().catch((e) => console.error(e));
               }}
+              openEditEmployeeModal={openEditEmployeeModal}
+              openRequestEmployeeLeaveModal={openRequestEmployeeLeaveModal}
               image={employee.user?.image || img}
               column1={employee.employee_id}
               column2={employee.name}
@@ -89,6 +115,7 @@ const EmployeeManager = () => {
                   ? "On leave"
                   : "Active"
               }
+              setCurrentEmployee={setCurrentEmployee}
             />
           ))}
         </tbody>
@@ -100,9 +127,21 @@ const EmployeeManager = () => {
           });
         }}
       />
+      <EditEmployeeContainer
+        currentEmployee={currentEmployee}
+        refetchEmployees={() => {
+          refetch().catch((e) => console.error(e));
+        }}
+      />
+      <EmployeeLeaveRequestFormContainer
+        employeeId={currentEmployee?.employee_id}
+        refetchLeaveRequests={() => {
+          refetchLeaveRequests().catch((e) => console.error(e));
+        }}
+      />
       <button
         onClick={openAddEmployeeModal}
-        className="btn-1 fixed bottom-8 left-1/2 w-1/3 -translate-x-1/2"
+        className="btn-1 fixed bottom-8 left-1/2 w-1/3 -translate-x-1/2 bg-slate-600/40 backdrop-blur-md dark:bg-slate-400/40"
       >
         Add Employee
       </button>
@@ -120,8 +159,22 @@ type ListItemProps = {
   column4?: string | number | null;
   column5?: string | number | null;
   column6?: string | number | null;
-  employee_id: string;
+  employee:
+    | (Employee & {
+        user: User | null;
+      })
+    | undefined;
   refetch: () => void;
+  openEditEmployeeModal: () => void;
+  openRequestEmployeeLeaveModal: () => void;
+  setCurrentEmployee: Dispatch<
+    SetStateAction<
+      | (Employee & {
+          user: User | null;
+        })
+      | undefined
+    >
+  >;
 };
 
 const ListItem = ({
@@ -131,12 +184,15 @@ const ListItem = ({
   column3 = "column3",
   column4 = "employee",
   column5 = "column5",
-  employee_id,
+  employee,
   refetch,
+  openEditEmployeeModal,
+  openRequestEmployeeLeaveModal,
+  setCurrentEmployee,
 }: ListItemProps) => {
-  const removeEmployee = trpc.employees.removeEmployee.useMutation();
+  const removeEmployee = api.employees.removeEmployee.useMutation();
   return (
-    <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-100 p-2 text-slate-600 dark:bg-slate-500 dark:text-slate-50">
+    <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-300/60 p-2 text-slate-600 backdrop-blur-md dark:bg-slate-500/60 dark:text-slate-50">
       <td className="p-2">
         <div className="h-8 w-8 overflow-hidden rounded-full bg-slate-300">
           <Image src={image} width={48} height={48} alt="profile-img" />
@@ -161,16 +217,34 @@ const ListItem = ({
         <div className="flex">
           <button
             onClick={() => {
+              openRequestEmployeeLeaveModal();
+              setCurrentEmployee(employee);
+            }}
+            className="btn-1 flex h-10 w-12 items-center justify-center"
+          >
+            <HiOutlineLogout />
+          </button>
+          <button
+            onClick={() => {
               removeEmployee
                 .mutateAsync({
-                  employeeId: employee_id,
+                  employeeId: employee?.employee_id || "",
                 })
                 .then(() => refetch())
                 .catch((e) => console.error(e));
             }}
-            className="btn-1 flex h-8 w-10 items-center justify-center"
+            className="btn-1 flex h-10 w-12 items-center justify-center"
           >
             {removeEmployee.isLoading ? <Loader /> : <HiX />}
+          </button>
+          <button
+            onClick={() => {
+              openEditEmployeeModal();
+              setCurrentEmployee(employee);
+            }}
+            className="btn-1 flex h-10 w-12 items-center justify-center"
+          >
+            <HiPencil />
           </button>
         </div>
       </td>

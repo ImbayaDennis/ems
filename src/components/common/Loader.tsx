@@ -1,8 +1,12 @@
 import React from 'react'
 
-const Loader = () => {
+type LoaderProps = {
+  className?: string;
+}
+
+const Loader = ({className}: LoaderProps) => {
   return (
-    <div role="status">
+    <div role="status" className={className}>
       <svg
         aria-hidden="true"
         className="p-1 h-8 w-8 animate-spin fill-orange-600 text-gray-200 dark:text-gray-600"

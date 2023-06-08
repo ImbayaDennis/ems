@@ -20,10 +20,10 @@ function Layout({ children }: Props) {
     <div
       className={`${
         themeFromStorage ? "dark" : ""
-      } z-0 h-screen w-screen overflow-hidden `}
+      } z-0 h-screen w-screen overflow-y-scroll scrollbar-thin`}
     >
       {session && <AppbarContainer />}
-      <div className="flex h-full w-full">
+      <div className="flex h-full w-full bg-gray-100 bg-main-texture bg-cover bg-blend-overlay dark:bg-gray-800">
         {session && (
           <SidebarContainer
             themeFromStorage={themeFromStorage}
@@ -32,7 +32,7 @@ function Layout({ children }: Props) {
           />
         )}
         <main
-          className={`p-2 h-full w-full overflow-scroll bg-gray-100 text-gray-500 scrollbar-thin dark:bg-gray-800 dark:text-gray-300 md:static overflow-y-scroll`}
+          className={`my-3 w-full py-9 px-4 text-gray-700 bg-blend-overlay scrollbar-thin scrollbar-track-slate-400/40 scrollbar-thumb-slate-600/40 dark:text-gray-300 dark:scrollbar-track-slate-800/40 dark:scrollbar-thumb-slate-900/40`}
         >
           {children}
         </main>

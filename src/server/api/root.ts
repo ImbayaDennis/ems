@@ -1,6 +1,7 @@
 import { createTRPCRouter } from "./trpc";
 import { leaveManagement } from "./routers/leaveManagement";
 import { employees } from "./routers/employee";
+import { logsManagement } from "./routers/logsManagement";
 
 /**
  * This is the primary router for your server.
@@ -8,8 +9,9 @@ import { employees } from "./routers/employee";
  * All routers added in /api/routers should be manually added here
  */
 export const appRouter = createTRPCRouter({
-  leaveManagement: leaveManagement,
-  employees: employees,
+  leaveManagement,
+  employees,
+  logsManagement,
 });
 
 // export type definition of API

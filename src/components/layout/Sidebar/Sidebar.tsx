@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { type ReactNode, type Dispatch, type SetStateAction, useLayoutEffect } from "react";
 import { HiMenu, HiMoon, HiSun } from "react-icons/hi";
-import { AdminLinks, EmployeeLinks } from "../../../assets/constants";
+import { ApplicationLinks, EmployeeLinks } from "../../../assets/constants";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { IconType } from "react-icons/lib";
 
 type Props = {
   sidebarIsOpen: boolean;
@@ -21,75 +20,72 @@ const Sidebar = ({
 }: Props) => {
   const width = sidebarIsOpen ? "w-[20rem]" : "w-12";
   const { data: session } = useSession();
-  
 
-
-    return (
+  return (
+    <div
+      className={`z-10 border-r border-r-gray-300 backdrop-blur-md bg-slate-100/40 dark:border-r-gray-900 dark:bg-slate-800/40 ${width}  flex h-full flex-col items-center transition-all `}
+    >
       <div
-        className={`z-10 border-r border-r-gray-300 bg-slate-100 dark:border-r-gray-900 dark:bg-slate-800 ${width}  flex h-full flex-col items-center transition-all`}
+        className={
+          sidebarIsOpen
+            ? "absolute top-0 left-0 -z-10 h-screen w-screen bg-black/20 backdrop-blur-md"
+            : ""
+        }
+        onClick={() => {
+          setSidebarIsOpen(false);
+        }}
+      />
+      <div className="h-12"></div>
+      <button
+        aria-label="expand sidebar"
+        onClick={() => setSidebarIsOpen((prev) => !prev)}
+        className="self-end px-3 py-2 text-2xl text-gray-500 transition-colors hover:text-orange-600 hover:dark:text-orange-400"
       >
-        <div
-          className={
-            sidebarIsOpen
-              ? "absolute top-0 left-0 -z-10 h-screen w-screen bg-black/20 backdrop-blur-sm"
-              : ""
-          }
-          onClick={() => {
-            setSidebarIsOpen(false);
-          }}
-        />
-        <button
-          aria-label="expand sidebar"
-          onClick={() => setSidebarIsOpen((prev) => !prev)}
-          className="self-end px-3 py-2 text-2xl text-gray-500 transition-colors hover:text-orange-600 hover:dark:text-orange-400"
-        >
-          <HiMenu />
-        </button>
-        <div className=" flex h-[calc(100vh-8rem)] w-full flex-col justify-between">
-          <div
-            className={`my-4 flex w-full flex-col self-start overflow-hidden`}
+        <HiMenu />
+      </button>
+      <div className=" flex h-[calc(100vh-8rem)] w-full flex-col justify-between">
+        <div className={`my-4 flex w-full flex-col self-start overflow-hidden`}>
+          {session?.user?.role !== "employee" || null || undefined
+            ? ApplicationLinks?.map((navLnk) => (
+                <SidebarLink
+                  key={navLnk.link}
+                  sidebarIsOpen={sidebarIsOpen}
+                  link={navLnk.link}
+                  icon={<navLnk.icon />}
+                  to={navLnk.to}
+                />
+              ))
+            : EmployeeLinks?.map((navLnk) => (
+                <SidebarLink
+                  key={navLnk.link}
+                  sidebarIsOpen={sidebarIsOpen}
+                  link={navLnk.link}
+                  icon={<navLnk.icon />}
+                  to={navLnk.to}
+                />
+              ))}
+        </div>
+        <div className="">
+          <button
+            aria-label="Theme toggle"
+            onClick={() => {
+              setIsDarkTheme();
+            }}
+            className="flex w-full flex-nowrap items-center border-l-4 border-l-transparent p-2 text-2xl text-gray-600 dark:text-gray-400"
           >
-            {session?.user?.role === "admin"
-              ? AdminLinks?.map((navLnk) => (
-                  <SidebarLink
-                    key={navLnk.link}
-                    sidebarIsOpen={sidebarIsOpen}
-                    link={navLnk.link}
-                    icon={<navLnk.icon />}
-                    to={navLnk.to}
-                  />
-                ))
-              : EmployeeLinks?.map((navLnk) => (
-                  <SidebarLink
-                    key={navLnk.link}
-                    sidebarIsOpen={sidebarIsOpen}
-                    link={navLnk.link}
-                    icon={<navLnk.icon />}
-                    to={navLnk.to}
-                  />
-                ))}
-          </div>
-          <div className="">
-            <button
-              aria-label="Theme toggle"
-              onClick={() => {
-                setIsDarkTheme();
-              }}
-              className="flex w-full flex-nowrap items-center border-l-4 border-l-transparent p-2 text-2xl text-gray-600 dark:text-gray-400"
+            <span>{isDarkTheme ? <HiSun /> : <HiMoon />} </span>
+            <span
+              className={`${
+                sidebarIsOpen ? "opacity-100" : "hidden opacity-0"
+              } ml-6 whitespace-nowrap text-base transition-opacity duration-300`}
             >
-              <span>{isDarkTheme ? <HiSun /> : <HiMoon />} </span>
-              <span
-                className={`${
-                  sidebarIsOpen ? "opacity-100" : "opacity-0 hidden"
-                } ml-6 whitespace-nowrap text-base transition-opacity duration-300`}
-              >
-                {isDarkTheme ? "Set Light Theme" : "Set Dark Theme"}
-              </span>
-            </button>
-          </div>
+              {isDarkTheme ? "Set Light Theme" : "Set Dark Theme"}
+            </span>
+          </button>
         </div>
       </div>
-    );
+    </div>
+  );
 };
 
 export default Sidebar;

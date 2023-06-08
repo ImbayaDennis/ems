@@ -7,63 +7,70 @@ generator client {
 }
 
 datasource db {
-  provider          = "mysql"
+  provider     = "mysql"
   // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
   // Further reading:
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
   // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   // shadowDatabaseUrl = env("SHADOW_DB_URL")
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
-  relationMode      = "prisma"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model LeaveType {
-  id            String          @id @default(cuid())
-  leave_type    String?
-  leave_desc    String?
-  leave_days    Int?
-  leaveRequests LeaveRequests[]
+  id              String            @id @default(cuid())
+  leave_type      String?
+  leave_desc      String?
+  leave_days      Int?
+  leaveRequests   LeaveRequests[]
   requestApproved RequestApproved[]
   requestRejected RequestRejected[]
 }
 
 model LeaveRequests {
-  id            String    @id @default(cuid())
-  employee_id   String    @unique
-  leave_type_id String?
-  start_date    String?
-  end_date      String?
-  leave_days    Int?
-  employee      Employee?   @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
-  leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id], onDelete: Cascade)
+  id                      String     @id @default(cuid())
+  employee_id             String
+  head_office_approver_id String?
+  work_assign_id          String?
+  leave_type_id           String?
+  start_date              String?
+  end_date                String?
+  leave_days              Int?
+  custom_type             String?
+  custom_desc             String?
+  employee                Employee?  @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
+  leave_type              LeaveType? @relation(fields: [leave_type_id], references: [id], onDelete: Cascade)
 
   @@index([leave_type_id])
   @@index([employee_id])
 }
 
 model RequestApproved {
-  id            String    @id @default(cuid())
-  leave_type_id String?
-  employee_id   String
-  start_date    String?
-  end_date      String?
-  still_on_leave Boolean? @default(true)
-  return_date   String?
-  employee      Employee?      @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
-  leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id], onDelete: Cascade)
+  id             String     @id @default(cuid())
+  leave_type_id  String?
+  employee_id    String?
+  start_date     String?
+  end_date       String?
+  still_on_leave Boolean?   @default(true)
+  return_date    String?
+  custom_type    String?
+  custom_desc    String?
+  employee       Employee?  @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
+  leave_type     LeaveType? @relation(fields: [leave_type_id], references: [id], onDelete: Cascade)
 
   @@index([leave_type_id])
   @@index([employee_id])
 }
 
 model RequestRejected {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   leave_type_id String?
   employee_id   String
   start_date    String?
   end_date      String?
-  employee      Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  custom_type   String?
+  custom_desc   String?
+  employee      Employee?  @relation(fields: [employee_id], references: [id], onDelete: Cascade)
   leave_type    LeaveType? @relation(fields: [leave_type_id], references: [id], onDelete: Cascade)
 
   @@index([leave_type_id])
@@ -71,28 +78,41 @@ model RequestRejected {
 }
 
 model Employee {
-  id            String  @id @default(cuid())
-  employee_id   String? @unique
-  name          String?
-  email         String? @unique
-  employed_on   String?
-  org_id        String?
-  leave_days    Int?
-  leave_bal     Int?
-  earned_leave  Int?
-  user          User?
-  leaveRequests LeaveRequests?
+  id              String            @id @default(cuid())
+  employee_id     String?           @unique
+  name            String?
+  email           String?           @unique
+  employed_on     String?
+  org_id          String?
+  leave_days      Int?
+  leave_bal       Int?
+  earned_leave    Int?
+  user            User?
+  leaveRequests   LeaveRequests[]
   requestApproved RequestApproved[]
   requestRejected RequestRejected[]
-  organization  Organization? @relation(fields: [org_id], references: [id], onDelete: Cascade)
+  logs            Log[]
+  organization    Organization?     @relation(fields: [org_id], references: [id], onDelete: Cascade)
 
   @@index([org_id])
 }
 
+model Log {
+  id          String  @id @default(cuid())
+  emp_name    String?
+  time_in     String?
+  time_out    String?
+  employee_id String?
+
+  employee Employee? @relation(fields: [employee_id], references: [employee_id])
+
+  @@index([employee_id])
+}
+
 model Organization {
-  id            String @id @default(cuid())
-  name          String
-  epmloyees     Employee[]
+  id        String     @id @default(cuid())
+  name      String
+  epmloyees Employee[]
 }
 
 // Necessary for Next auth
@@ -109,7 +129,7 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-  user              User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -126,16 +146,16 @@ model Session {
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?         @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
   role          String?
   org_id        String?
   accounts      Account?
   sessions      Session[]
-  Employee      Employee? @relation(fields: [email], references: [email])
+  Employee      Employee? @relation(fields: [email], references: [email], onDelete: Cascade)
 
   @@index([email])
   @@index([org_id])

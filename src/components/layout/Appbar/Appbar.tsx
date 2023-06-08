@@ -2,36 +2,36 @@ import Head from 'next/head'
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import React from 'react'
-import spurLogo from "../../../assets/images/spur-logo.png"
+import technisoftLogo from "../../../assets/images/technisoft-logo.png";
 
 type Props = {
   signIn: () => void;
   signOut: () => void;
-  isAuth: boolean
+  isAuth: boolean;
   imgUrl: string | StaticImageData;
-}
+};
 
-function Appbar({signIn, signOut, isAuth, imgUrl}: Props) {
+function Appbar({ signIn, signOut, isAuth, imgUrl }: Props) {
   return (
     <>
       <Head>
-        <title>Employee Management System</title>
+        <title>Technisoft Systems - HRMS</title>
         <meta name="description" content="Custom Content Management System" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <header className="z-30 flex h-12 w-screen items-center justify-between bg-gray-300 px-4 text-gray-700 shadow-md dark:bg-gray-900 dark:text-gray-400">
+      <header className="fixed z-30 flex h-12 w-full items-center justify-between bg-gray-300/80 px-4 text-gray-700 shadow-md backdrop-blur-md dark:bg-gray-900/80 dark:text-gray-400">
         <div className="">
           <Image
-            src={spurLogo}
-            width={96}
-            height={48}
+            src={technisoftLogo}
+            width={40}
+            height={40}
             alt="LOGO"
-            className="rounded-md mix-blend-multiply dark:mix-blend-normal"
+            className="rounded-sm mix-blend-multiply dark:mix-blend-normal"
           />
         </div>
-        <h3 className="text-2xl font-light tracking-[4px] hidden md:visible">
-          <span className='text-blue-600'>TECHNISOFT</span> <span className='text-orange-600'>SYSTEMS</span> - HRMS
-        </h3>
+        {/* <h3 className="text-2xl font-light tracking-[4px] hidden md:block">
+          <span className='text-blue-500 font-bold'>TECHNISOFT</span> <span className='text-orange-500 font-bold'>SYSTEMS</span> - HRMS
+        </h3> */}
         <div className="flex items-center">
           {!isAuth ? (
             <button

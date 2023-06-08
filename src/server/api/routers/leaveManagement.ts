@@ -1,54 +1,291 @@
+import { Employee, LeaveRequests, LeaveType, User } from "@prisma/client";
 import moment from "moment";
 import { z } from "zod";
 
 import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
+import { handleSendMail } from "~/utils/mail";
+import { env } from "~/env.mjs";
 
 export const leaveManagement = createTRPCRouter({
   getLeaveRequests: adminProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.leaveRequests.findMany({
+    const requests = await ctx.prisma.leaveRequests.findMany({
       include: { leave_type: true, employee: { include: { user: true } } },
     });
+
+    if (ctx.session.user.role === "owner") {
+      return requests;
+    }
+    if (ctx.session.user.role === "admin") {
+      return requests.filter(
+        (_req) => _req.employee?.user?.role !== ("owner" || "admin")
+      );
+    }
+    if (ctx.session.user.role === "manager") {
+      return requests.filter(
+        (_req) => _req.employee?.user?.role === "employee"
+      );
+    }
   }),
   getLeaveRequest: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.leaveRequests.findUnique({
+    return await ctx.prisma.leaveRequests.findMany({
+      where: { employee_id: ctx.session.user.employee_id },
+      include: { employee: { include: { user: true } } },
+    });
+  }),
+  getLeaveApproved: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.requestApproved.findMany({
       where: { employee_id: ctx.session.user.employee_id },
       include: { employee: { include: { user: true } } },
     });
   }),
   getEmployeesOnLeave: adminProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.requestApproved.findMany({
-      where: { still_on_leave: true },
       include: {
         leave_type: true,
         employee: { include: { user: true } },
       },
     });
   }),
-  getEmployeeOnLeave: protectedProcedure
-  .query(async({ctx})=>{
+  getEmployeeOnLeave: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.requestApproved.findFirst({
-      where: {employee_id: ctx.session.user.employee_id, AND: {still_on_leave: true}}
-    })
+      where: {
+        employee_id: ctx.session.user.employee_id,
+        AND: { still_on_leave: true },
+      },
+    });
   }),
+  getLeaveDaysTaken: protectedProcedure
+    .input(z.object({ employee_id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.requestApproved.findMany({
+        where: {
+          employee_id: input.employee_id,
+        },
+      });
+    }),
   requestLeave: protectedProcedure
     .input(
       z.object({
-        leaveTypeId: z.string().nullable(),
-        startDate: z.string().nullable(),
-        endDate: z.string().nullable(),
-        leaveDays: z.number().nullable(),
+        leaveTypeId: z.string().nullish(),
+        startDate: z.string(),
+        endDate: z.string(),
+        leaveDays: z.number(),
+        head_office_approver_id: z.string(),
+        work_assign_id: z.string(),
+        customLeaveType: z.string().nullish().nullable(),
+        customLeaveDesc: z.string().nullish().nullable(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      return await ctx.prisma.leaveRequests.create({
+      const leaveRequest = await ctx.prisma.leaveRequests.create({
         data: {
           employee_id: ctx.session.user.employee_id,
           leave_type_id: input.leaveTypeId,
           start_date: input.startDate,
           end_date: input.endDate,
           leave_days: input.leaveDays,
+          head_office_approver_id: input.head_office_approver_id,
+          work_assign_id: input.work_assign_id,
+          custom_type: input.customLeaveType,
+          custom_desc: input.customLeaveDesc,
         },
       });
+
+      await ctx.prisma
+        .$transaction([
+          ctx.prisma.employee.findUnique({
+            where: { employee_id: leaveRequest.employee_id },
+          }),
+          ctx.prisma.employee.findUnique({
+            where: {
+              employee_id: leaveRequest.head_office_approver_id || undefined,
+            },
+          }),
+          ctx.prisma.employee.findUnique({
+            where: { employee_id: leaveRequest.work_assign_id || undefined },
+          }),
+          ctx.prisma.leaveType.findUnique({
+            where: {
+              id:
+                leaveRequest.leave_type_id ||
+                leaveRequest.custom_type ||
+                undefined,
+            },
+          }),
+        ])
+        .then((employeeData) => {
+          if (
+            employeeData[0]?.name &&
+            employeeData[1]?.name &&
+            employeeData[2]?.name &&
+            employeeData[0]?.email &&
+            employeeData[1]?.email &&
+            employeeData[2]?.email &&
+            employeeData[3]?.leave_type &&
+            leaveRequest.start_date
+          ) {
+            handleSendMail({
+              from: "Technisoft HRMS <imbayadennis98@gmail.com>",
+              to: employeeData[0]?.email,
+              subject: `Leave request by ${employeeData[0].name}`,
+              data: {
+                employeeName: employeeData[0]?.name,
+                headOfficeApproverName: employeeData[1]?.name,
+                workStandInName: employeeData[2]?.name,
+                leaveType: employeeData[3]?.leave_type,
+                startDate: leaveRequest.start_date,
+                subject: employeeData[3]?.leave_type,
+              },
+            });
+            handleSendMail({
+              from: "Technisoft HRMS <imbayadennis98@gmail.com>",
+              to: employeeData[1]?.email,
+              subject: `Leave request by ${employeeData[0].name}`,
+              data: {
+                employeeName: employeeData[0]?.name,
+                headOfficeApproverName: employeeData[1]?.name,
+                workStandInName: employeeData[2]?.name,
+                leaveType: employeeData[3]?.leave_type,
+                startDate: leaveRequest.start_date,
+                subject: employeeData[3]?.leave_type,
+              },
+            });
+            handleSendMail({
+              from: "Technisoft HRMS <imbayadennis98@gmail.com>",
+              to: employeeData[2]?.email,
+              subject: `Leave request by ${employeeData[0].name}`,
+              data: {
+                employeeName: employeeData[0]?.name,
+                headOfficeApproverName: employeeData[1]?.name,
+                workStandInName: employeeData[2]?.name,
+                leaveType: employeeData[3]?.leave_type,
+                startDate: leaveRequest.start_date,
+                subject: employeeData[3]?.leave_type,
+              },
+            });
+          } else {
+            console.log({
+              Error: "Some data is missinmg",
+              employee: employeeData[0],
+              headOffice: employeeData[1],
+              workAssign: employeeData[2],
+            });
+          }
+        });
+
+      return leaveRequest;
+    }),
+  requestEmployeeLeave: protectedProcedure
+    .input(
+      z.object({
+        employee_id: z.string(),
+        leaveTypeId: z.string().nullable().nullish(),
+        startDate: z.string(),
+        endDate: z.string(),
+        leaveDays: z.number().nullable(),
+        head_office_approver_id: z.string().nullish(),
+        work_assign_id: z.string().nullish(),
+        customLeaveType: z.string().nullable().nullish(),
+        customLeaveDesc: z.string().nullable().nullish(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const leaveRequest = await ctx.prisma.leaveRequests.create({
+        data: {
+          employee_id: input.employee_id,
+          leave_type_id: input.leaveTypeId,
+          start_date: input.startDate,
+          end_date: input.endDate,
+          leave_days: input.leaveDays,
+          head_office_approver_id: input.head_office_approver_id,
+          work_assign_id: input.work_assign_id,
+          custom_type: input.customLeaveType,
+          custom_desc: input.customLeaveDesc,
+        },
+      });
+
+      await ctx.prisma
+        .$transaction([
+          ctx.prisma.employee.findUnique({
+            where: { employee_id: leaveRequest.employee_id },
+          }),
+          ctx.prisma.employee.findUnique({
+            where: {
+              employee_id: leaveRequest.head_office_approver_id || undefined,
+            },
+          }),
+          ctx.prisma.employee.findUnique({
+            where: { employee_id: leaveRequest.work_assign_id || undefined },
+          }),
+          ctx.prisma.leaveType.findUnique({
+            where: {
+              id:
+                leaveRequest.leave_type_id ||
+                leaveRequest.custom_type ||
+                undefined,
+            },
+          }),
+        ])
+        .then((employeeData) => {
+          if (
+            employeeData[0]?.name &&
+            employeeData[1]?.name &&
+            employeeData[2]?.name &&
+            employeeData[0]?.email &&
+            employeeData[1]?.email &&
+            employeeData[2]?.email &&
+            employeeData[3]?.leave_type &&
+            leaveRequest.start_date
+          ) {
+            handleSendMail({
+              from: "Technisoft HRMS <imbayadennis98@gmail.com>",
+              to: employeeData[0]?.email,
+              subject: `Leave request by ${employeeData[0].name}`,
+              data: {
+                employeeName: employeeData[0]?.name,
+                headOfficeApproverName: employeeData[1]?.name,
+                workStandInName: employeeData[2]?.name,
+                leaveType: employeeData[3]?.leave_type,
+                startDate: leaveRequest.start_date,
+                subject: employeeData[3]?.leave_type,
+              },
+            });
+            handleSendMail({
+              from: "Technisoft HRMS <imbayadennis98@gmail.com>",
+              to: employeeData[1]?.email,
+              subject: `Leave request by ${employeeData[0].name}`,
+              data: {
+                employeeName: employeeData[0]?.name,
+                headOfficeApproverName: employeeData[1]?.name,
+                workStandInName: employeeData[2]?.name,
+                leaveType: employeeData[3]?.leave_type,
+                startDate: leaveRequest.start_date,
+                subject: employeeData[3]?.leave_type,
+              },
+            });
+            handleSendMail({
+              from: "Technisoft HRMS <imbayadennis98@gmail.com>",
+              to: employeeData[2]?.email,
+              subject: `Leave request by ${employeeData[0].name}`,
+              data: {
+                employeeName: employeeData[0]?.name,
+                headOfficeApproverName: employeeData[1]?.name,
+                workStandInName: employeeData[2]?.name,
+                leaveType: employeeData[3]?.leave_type,
+                startDate: leaveRequest.start_date,
+                subject: employeeData[3]?.leave_type,
+              },
+            });
+          } else {
+            console.log({
+              Error: "Some data is missinmg",
+              employee: employeeData[0],
+              headOffice: employeeData[1],
+              workAssign: employeeData[2],
+            });
+          }
+        });
+      return leaveRequest;
     }),
   approveLeaveRequest: adminProcedure
     .input(z.object({ leaveRequestId: z.string() }))
@@ -62,8 +299,8 @@ export const leaveManagement = createTRPCRouter({
             employee: { select: { id: true } },
           },
         })
-        .then(async(leaveData) => {
-          await ctx.prisma.requestApproved
+        .then(async (leaveData) => {
+          return await ctx.prisma.requestApproved
             .create({
               data: {
                 employee_id: leaveData?.employee_id || "",
@@ -71,19 +308,22 @@ export const leaveManagement = createTRPCRouter({
                 start_date: leaveData?.start_date || "",
                 end_date: leaveData?.end_date || "",
                 still_on_leave: true,
+                custom_type: leaveData?.custom_type,
+                custom_desc: leaveData?.custom_desc,
               },
             })
-            .then(async() => {
-              await ctx.prisma.leaveRequests.delete({
-                where: {id: input.leaveRequestId}
-              })
+            .then(async () => {
+              return await ctx.prisma.leaveRequests.delete({
+                where: { id: input.leaveRequestId },
+              });
             });
-        });
+        })
+        .then((approvedRequest) => {});
     }),
   rejectLeaveRequest: adminProcedure
     .input(z.object({ leaveRequestId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      await ctx.prisma.leaveRequests
+      return await ctx.prisma.leaveRequests
         .delete({
           where: {
             id: input.leaveRequestId,
@@ -97,6 +337,8 @@ export const leaveManagement = createTRPCRouter({
                 leave_type_id: leaveData.leave_type_id,
                 start_date: leaveData.start_date,
                 end_date: leaveData.end_date,
+                custom_type: leaveData.custom_type,
+                custom_desc: leaveData.custom_desc,
               },
             })
             .catch((e) => {
@@ -118,16 +360,19 @@ export const leaveManagement = createTRPCRouter({
             return_date: input.returnDate,
           },
         })
-        .then((approvedRequest)=>{
-          const startDate = approvedRequest.start_date
-          const endDate = input.returnDate
+        .then((approvedRequest) => {
+          const startDate = approvedRequest.start_date;
+          const endDate = input.returnDate;
 
-          const dateDiff = moment(endDate).diff(moment(startDate), "days")
+          const dateDiff = moment(endDate).diff(moment(startDate), "days");
+
+          if (approvedRequest.leave_type_id === ("" || "")) {
+          }
 
           return ctx.prisma.employee.update({
-            where: {employee_id: approvedRequest.employee_id},
-            data: {leave_bal: {decrement: dateDiff}}
-          })
+            where: { employee_id: approvedRequest.employee_id || undefined },
+            data: { leave_bal: { decrement: dateDiff } },
+          });
         })
         .catch((e) => {
           console.error(e);

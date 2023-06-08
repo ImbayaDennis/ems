@@ -2,15 +2,16 @@ import moment from "moment";
 import { useSession } from "next-auth/react";
 import { FormEvent, useState, useContext } from "react";
 import { ModalContextProvider } from "../../../contexts/ModalsContext";
-import { trpc } from "../../../utils/trpc";
+import { api } from "../../../utils/api";
 import AddEmployeePresentation from "./AddEmployeePresentation";
+import { toast } from "react-toastify";
 
 type AddEmployeeProps = {
   refetchEmployees: () => void
 }
 const AddEmployeeContainer = ({refetchEmployees}:AddEmployeeProps) => {
   const { mutateAsync: addEmployee, isLoading, isSuccess } =
-    trpc.employees.addEmployee.useMutation();
+    api.employees.addEmployee.useMutation();
   const { data: session } = useSession();
   const { setModals } = useContext(ModalContextProvider);
 
@@ -54,6 +55,7 @@ const AddEmployeeContainer = ({refetchEmployees}:AddEmployeeProps) => {
           : null;
         refetchEmployees();
         setErrors([])
+        toast.success("Employee added successfuly")
 
         setEmployeeID("")
         setEmployeeName("")
@@ -63,6 +65,7 @@ const AddEmployeeContainer = ({refetchEmployees}:AddEmployeeProps) => {
         
       }).catch((e)=>{
         console.error(e)
+        toast.error("Error while adding employee")
       });
     }else{
       setErrors(["Please provide all required detaials"])
