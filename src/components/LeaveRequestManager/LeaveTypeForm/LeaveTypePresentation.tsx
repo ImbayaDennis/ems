@@ -1,4 +1,4 @@
-import {Dispatch, FormEvent, SetStateAction} from 'react'
+import type {Dispatch, FormEvent, SetStateAction} from 'react'
 import Loader from '../../common/Loader';
 import ModalContainer from '../../common/Modal/ModalContainer'
 

@@ -32,7 +32,7 @@ function Layout({ children }: Props) {
           />
         )}
         <main
-          className={`my-3 w-full py-9 px-4 text-gray-700 bg-blend-overlay scrollbar-thin scrollbar-track-slate-400/40 scrollbar-thumb-slate-600/40 dark:text-gray-300 dark:scrollbar-track-slate-800/40 dark:scrollbar-thumb-slate-900/40`}
+          className={`my-3 w-full transition-all py-9 px-4 text-gray-700 bg-blend-overlay scrollbar-thin scrollbar-track-slate-400/40 scrollbar-thumb-slate-600/40 dark:text-gray-300 dark:scrollbar-track-slate-800/40 dark:scrollbar-thumb-slate-900/40`}
         >
           {children}
         </main>

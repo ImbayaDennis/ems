@@ -10,7 +10,7 @@ const Home: NextPage = () => {
 
   if (status === "loading") {
     return (
-      <div className="flex h-full w-full items-center justify-center">
+      <div className="flex h-screen w-screen items-center justify-center">
         <Loader />
       </div>
     );
@@ -18,7 +18,7 @@ const Home: NextPage = () => {
     return <AuthRedirect />;
   }
 
-  if(session.user?.role !== "employee" || null || undefined){
+  if(session.user.role !== "employee" || null || undefined){
     return (
     <AdminHomePage />
     )

@@ -1,4 +1,4 @@
-import {FormEvent, useContext, useState} from 'react'
+import {type FormEvent, useContext, useState} from 'react'
 import { ModalContextProvider } from '../../../contexts/ModalsContext'
 import { api } from '../../../utils/api'
 import LeaveTypePresentation from './LeaveTypePresentation'

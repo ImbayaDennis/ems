@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import nodemailer from "nodemailer";
 import { env } from "~/env.mjs";
 
@@ -19,6 +21,7 @@ type TMailData = {
 const mailTextBuilder: (rawText: {
   employeeName?: string;
   headOfficeApproverName?: string;
+  branchApproverName?: string;
   workStandInName?: string;
   subject?: string;
   startDate?: string;
@@ -29,15 +32,18 @@ const mailTextBuilder: (rawText: {
   const keyMap = {
     employeeName: "Employee Name",
     headOfficeApproverName: "Head office approver",
+    branchApproverName: "Branch approver",
     workStandInName: "Work assignment stand in",
     subject: "Subject",
     startDate: "Start date",
     leaveType: "Leave type",
   };
 
+  type TKeyMap = typeof keyMap;
+
   return rawTextVals
     .map((values) => {
-      return `${keyMap[values[0] as keyof typeof keyMap]}: ${values[1]}`;
+      return `${keyMap[values[0] as keyof TKeyMap]}: ${values[1]}`;
     })
     .join(",\n\n");
 };
@@ -45,6 +51,7 @@ const mailTextBuilder: (rawText: {
 const mailHtmlBuilder: (rawHtml: {
   employeeName?: string;
   headOfficeApproverName?: string;
+  branchApproverName?: string;
   workStandInName?: string;
   subject?: string;
   startDate?: string;
@@ -55,24 +62,20 @@ const mailHtmlBuilder: (rawHtml: {
   const keyMap = {
     employeeName: "Employee Name",
     headOfficeApproverName: "Head office approver",
+    branchApproverName: "Branch approver",
     workStandInName: "Work assignment stand in",
     subject: "Subject",
     startDate: "Start date",
     leaveType: "Leave type",
   };
 
-  const html =
-    `<html><body><main>` +
-    rawHtmlVals
-      .map((values) => {
-        return `<h3>${
-          keyMap[values[0] as keyof typeof keyMap]
-        }:</h3><br><p>${values[1]}</p><br><br>`;
-      })
-      .join("") +
-    `</main></body></html>`;
+  type TKeyMap = typeof keyMap;
 
-  return html;
+  return rawHtmlVals
+    .map((values) => {
+      return `<h3>${values[0] as keyof TKeyMap}:</h3><br><p>${values[1]}</p><br>`;
+    })
+    .join("");
 };
 
 export const transporter = nodemailer.createTransport({
@@ -101,4 +104,5 @@ export const handleSendMail = async ({
   };
 
   const sendMail = await transporter.sendMail(mailData);
+  return sendMail;
 };

@@ -3,16 +3,21 @@
 @tailwind utilities;
 
 @layer components {
+    /* * {
+        @apply scrollbar-thin scrollbar-thumb-slate-400/60 dark:scrollbar-thumb-slate-600/60 overflow-hidden
+    } */
+
     div{
         @apply scrollbar-thin
     }
+    
     body {
-            @apply bg-main-texture bg-cover bg-blend-overlay
-        }
-    .btn-1 {
-        @apply p-2 h-10 flex items-center justify-center text-sm min-w-fit max-w-sm mx-2 rounded-sm text-gray-800 dark:text-gray-200 transition-colors
+        @apply bg-main-texture bg-cover bg-blend-overlay
     }
-        .input-1 {
-            @apply w-full rounded-sm bg-slate-200 p-2 dark:bg-slate-700 border-none outline-transparent
+    .btn-1 {
+        @apply p-2 h-10 flex items-center justify-center text-sm min-w-fit max-w-sm mx-2 rounded-md text-gray-800 dark:text-gray-200 transition-colors
+    }
+    .input-1 {
+        @apply w-full rounded-md bg-slate-200 p-2 dark:bg-slate-700 border-none outline-transparent
     }
 }

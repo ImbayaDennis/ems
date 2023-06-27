@@ -29,13 +29,13 @@ const EmployeeMetricsCard = ({
 }: Props) => {
   if (isLoading) {
     return (
-      <div className="my-4 flex h-fit min-h-max w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-sm bg-slate-300/40 p-4 shadow-md  backdrop-blur-md dark:bg-slate-600/40">
+      <div className="my-4 flex h-fit min-h-max w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-lg bg-slate-300/40 p-4 shadow-md  backdrop-blur-md dark:bg-slate-600/40">
         <Loader />
       </div>
     );
   }
   return (
-    <div className="my-4 flex h-fit w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-sm bg-slate-300/40 p-4 shadow-md  backdrop-blur-md dark:bg-slate-600/40">
+    <div className="my-4 flex h-fit w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-lg bg-slate-300/40 p-4 shadow-md  backdrop-blur-md dark:bg-slate-600/40">
       <div className="flex h-2/3 w-36 flex-col items-center justify-center">
         {metric_one_loading ? (
           <Loader />

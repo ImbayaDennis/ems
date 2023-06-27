@@ -2,16 +2,16 @@ import Head from 'next/head'
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import React from 'react'
-import technisoftLogo from "../../../assets/images/technisoft-logo.png";
+import technisoftLogo from "../../../assets/images/technisoft-logo.png"
 
 type Props = {
   signIn: () => void;
   signOut: () => void;
-  isAuth: boolean;
+  isAuth: boolean
   imgUrl: string | StaticImageData;
-};
+}
 
-function Appbar({ signIn, signOut, isAuth, imgUrl }: Props) {
+function Appbar({signIn, signOut, isAuth, imgUrl}: Props) {
   return (
     <>
       <Head>
@@ -19,14 +19,14 @@ function Appbar({ signIn, signOut, isAuth, imgUrl }: Props) {
         <meta name="description" content="Custom Content Management System" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <header className="fixed z-30 flex h-12 w-full items-center justify-between bg-gray-300/80 px-4 text-gray-700 shadow-md backdrop-blur-md dark:bg-gray-900/80 dark:text-gray-400">
+      <header className="z-30 flex h-12 w-full items-center justify-between backdrop-blur-md bg-gray-300/40 px-4 text-gray-700 shadow-md dark:bg-gray-900/40 dark:text-gray-400 fixed">
         <div className="">
           <Image
             src={technisoftLogo}
             width={40}
             height={40}
             alt="LOGO"
-            className="rounded-sm mix-blend-multiply dark:mix-blend-normal"
+            className="rounded-md mix-blend-multiply dark:mix-blend-normal"
           />
         </div>
         {/* <h3 className="text-2xl font-light tracking-[4px] hidden md:block">

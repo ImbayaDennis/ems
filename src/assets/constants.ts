@@ -1,8 +1,6 @@
-import { Employee, RequestApproved } from "@prisma/client";
-import { rejects } from "assert";
+import type { Employee, RequestApproved } from "@prisma/client";
 import moment from "moment";
 import { HiClock, HiCollection, HiHome, HiUserGroup } from "react-icons/hi";
-import { api } from "~/utils/api";
 
 export const ApplicationLinks = [
   { link: "/", to: "Dashboard", icon: HiHome },
@@ -11,7 +9,6 @@ export const ApplicationLinks = [
     to: "Leave Request Manager",
     icon: HiCollection,
   },
-  //{ link: "/logs-manager", to: "Logs Manager", icon: HiClock },
   { link: "/employee-manager", to: "Employee Manager", icon: HiUserGroup },
 ];
 
@@ -36,11 +33,9 @@ export const dateYesterday = moment(dateToday)
   .subtract(1, "day")
   .format("YYYY-MM-DD");
 
-export const DAYS_EARNED_PER_MONTH = 2.5;
+export const DAYS_EARNED_PER_MONTH = 1.75
 
-export const calculateEarnedLeaveDays = (
-  employee: Employee | null | undefined
-) => {
+export const calculateEarnedLeaveDays = (employee: Employee | null | undefined) => {
   return (
     Math.floor(
       (moment(dateToday).diff(employee?.employed_on, "months") % 12) *
@@ -50,7 +45,6 @@ export const calculateEarnedLeaveDays = (
 };
 
 //(dateToday - dateEmployed)
-
 
 export const calculateLeaveDaysTaken = (
   leaveDaysTaken: RequestApproved[] | undefined

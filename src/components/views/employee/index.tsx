@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useSession } from "next-auth/react";
 import { useContext } from "react";
 import { ModalContextProvider } from "../../../contexts/ModalsContext";
@@ -10,15 +14,13 @@ import { DAYS_EARNED_PER_MONTH, dateToday } from "~/assets/constants";
 
 const EmployeeHomePage = () => {
   const { data: session } = useSession();
-  const { data: leaveRequest, refetch } =
+  const { refetch } =
     api.leaveManagement.getLeaveRequest.useQuery();
-  const { data: employeeOnLeave } =
-    api.leaveManagement.getEmployeeOnLeave.useQuery();
   const { data: employee, isLoading } = api.employees.getEmployee.useQuery();
   const modalContext = useContext(ModalContextProvider);
-  const { data: leaveDaysTaken, isLoading: leaveDaysTakenLoading } =
+  const { data: leaveDaysTaken } =
     api.leaveManagement.getLeaveDaysTaken.useQuery({
-      employee_id: session?.user?.employee_id,
+      employee_id: session?.user.employee_id || "",
     });
 
   const openLeaveReqModal = () => {

@@ -1,6 +1,10 @@
-import { Employee, User } from "@prisma/client";
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import type { Employee, User } from "@prisma/client";
 import Image, { type StaticImageData } from "next/image";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
+import { type Dispatch, type SetStateAction, useContext, useState } from "react";
 import { HiOutlineLogout, HiPencil, HiX } from "react-icons/hi";
 import img from "~/assets/images/blank-profile-picture.jpg";
 import { ModalContextProvider } from "../../../contexts/ModalsContext";
@@ -18,7 +22,7 @@ const EmployeeManager = () => {
   } = api.employees.getEmployees.useQuery();
   const { data: employeesOnLeave } =
     api.leaveManagement.getEmployeesOnLeave.useQuery();
-  const { data: leaveRequests, refetch: refetchLeaveRequests } =
+  const { refetch: refetchLeaveRequests } =
     api.leaveManagement.getLeaveRequests.useQuery();
   const { setModals } = useContext(ModalContextProvider);
 
@@ -110,7 +114,7 @@ const EmployeeManager = () => {
               column4={employee.user?.role}
               column5={
                 employeesOnLeave?.filter(
-                  (x) => x.employee_id === employee.employee_id
+                  (x) => x.employee_id === employee.employee_id && x.still_on_leave
                 )[0]
                   ? "On leave"
                   : "Active"
@@ -141,7 +145,7 @@ const EmployeeManager = () => {
       />
       <button
         onClick={openAddEmployeeModal}
-        className="btn-1 fixed bottom-8 left-1/2 w-1/3 -translate-x-1/2 bg-slate-600/40 backdrop-blur-md dark:bg-slate-400/40"
+        className="btn-1 fixed bottom-8 left-1/2 w-1/3 -translate-x-1/2 bg-slate-600/40 dark:bg-slate-400/40 backdrop-blur-md"
       >
         Add Employee
       </button>

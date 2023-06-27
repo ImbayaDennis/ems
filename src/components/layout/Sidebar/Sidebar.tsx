@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import Link from "next/link";
-import { type ReactNode, type Dispatch, type SetStateAction, useLayoutEffect } from "react";
+import { type ReactNode, type Dispatch, type SetStateAction } from "react";
 import { HiMenu, HiMoon, HiSun } from "react-icons/hi";
 import { ApplicationLinks, EmployeeLinks } from "../../../assets/constants";
 import { useRouter } from "next/router";
@@ -39,7 +40,7 @@ const Sidebar = ({
       <button
         aria-label="expand sidebar"
         onClick={() => setSidebarIsOpen((prev) => !prev)}
-        className="self-end px-3 py-2 text-2xl text-gray-500 transition-colors hover:text-orange-600 hover:dark:text-orange-400"
+        className="self-end px-2 py-2 text-2xl text-gray-500 transition-colors hover:text-orange-600 hover:dark:text-orange-400"
       >
         <HiMenu />
       </button>

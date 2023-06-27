@@ -1,4 +1,4 @@
-import { FormEvent, useState, useContext } from 'react'
+import { type FormEvent, useState, useContext } from 'react'
 import { ModalContextProvider } from '../../../contexts/ModalsContext'
 import { api } from '../../../utils/api'
 import LeaveReturnForm from './LeaveReturnForm'

@@ -1,13 +1,12 @@
-import { Employee, LeaveRequests, LeaveType, User } from "@prisma/client";
 import moment from "moment";
 import { z } from "zod";
 
 import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
 import { handleSendMail } from "~/utils/mail";
-import { env } from "~/env.mjs";
 
 export const leaveManagement = createTRPCRouter({
   getLeaveRequests: adminProcedure.query(async ({ ctx }) => {
+
     const requests = await ctx.prisma.leaveRequests.findMany({
       include: { leave_type: true, employee: { include: { user: true } } },
     });
@@ -55,7 +54,7 @@ export const leaveManagement = createTRPCRouter({
     });
   }),
   getLeaveDaysTaken: protectedProcedure
-    .input(z.object({ employee_id: z.string().nullish() }))
+    .input(z.object({ employee_id: z.string() }))
     .query(async ({ ctx, input }) => {
       return await ctx.prisma.requestApproved.findMany({
         where: {
@@ -66,14 +65,14 @@ export const leaveManagement = createTRPCRouter({
   requestLeave: protectedProcedure
     .input(
       z.object({
-        leaveTypeId: z.string().nullish(),
-        startDate: z.string(),
-        endDate: z.string(),
-        leaveDays: z.number(),
-        head_office_approver_id: z.string(),
-        work_assign_id: z.string(),
-        customLeaveType: z.string().nullish().nullable(),
-        customLeaveDesc: z.string().nullish().nullable(),
+        leaveTypeId: z.string().nullable().nullish(),
+        startDate: z.string().nullable(),
+        endDate: z.string().nullable(),
+        leaveDays: z.number().nullable(),
+        head_office_approver_id: z.string().nullish(),
+        work_assign_id: z.string().nullish(),
+        customLeaveType: z.string().nullable().nullish(),
+        customLeaveDesc: z.string().nullable().nullish(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -97,23 +96,16 @@ export const leaveManagement = createTRPCRouter({
             where: { employee_id: leaveRequest.employee_id },
           }),
           ctx.prisma.employee.findUnique({
-            where: {
-              employee_id: leaveRequest.head_office_approver_id || undefined,
-            },
+            where: { employee_id: leaveRequest.head_office_approver_id || undefined },
           }),
           ctx.prisma.employee.findUnique({
             where: { employee_id: leaveRequest.work_assign_id || undefined },
           }),
           ctx.prisma.leaveType.findUnique({
-            where: {
-              id:
-                leaveRequest.leave_type_id ||
-                leaveRequest.custom_type ||
-                undefined,
-            },
+            where: { id: leaveRequest.leave_type_id || leaveRequest.custom_type || undefined },
           }),
         ])
-        .then((employeeData) => {
+        .then(async (employeeData) => {
           if (
             employeeData[0]?.name &&
             employeeData[1]?.name &&
@@ -124,7 +116,7 @@ export const leaveManagement = createTRPCRouter({
             employeeData[3]?.leave_type &&
             leaveRequest.start_date
           ) {
-            handleSendMail({
+            await handleSendMail({
               from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[0]?.email,
               subject: `Leave request by ${employeeData[0].name}`,
@@ -137,8 +129,8 @@ export const leaveManagement = createTRPCRouter({
                 subject: employeeData[3]?.leave_type,
               },
             })
-            .catch((e)=>console.error(e));
-            handleSendMail({
+            .catch((e)=>{console.error(e)});
+            await handleSendMail({
               from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[1]?.email,
               subject: `Leave request by ${employeeData[0].name}`,
@@ -150,8 +142,9 @@ export const leaveManagement = createTRPCRouter({
                 startDate: leaveRequest.start_date,
                 subject: employeeData[3]?.leave_type,
               },
-            }).catch((e) => console.error(e));
-            handleSendMail({
+            })
+            .catch((e)=>{console.error(e)});
+            await handleSendMail({
               from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[2]?.email,
               subject: `Leave request by ${employeeData[0].name}`,
@@ -163,14 +156,15 @@ export const leaveManagement = createTRPCRouter({
                 startDate: leaveRequest.start_date,
                 subject: employeeData[3]?.leave_type,
               },
-            }).catch((e) => console.error(e));
-          } else {
+            })
+            .catch((e)=>{console.error(e)});
+          }else{
             console.log({
               Error: "Some data is missinmg",
               employee: employeeData[0],
               headOffice: employeeData[1],
               workAssign: employeeData[2],
-            });
+            })
           }
         });
 
@@ -181,11 +175,11 @@ export const leaveManagement = createTRPCRouter({
       z.object({
         employee_id: z.string(),
         leaveTypeId: z.string().nullable().nullish(),
-        startDate: z.string(),
-        endDate: z.string(),
+        startDate: z.string().nullable(),
+        endDate: z.string().nullable(),
         leaveDays: z.number().nullable(),
-        head_office_approver_id: z.string().nullish(),
-        work_assign_id: z.string().nullish(),
+        head_office_approver_id: z.string(),
+        work_assign_id: z.string(),
         customLeaveType: z.string().nullable().nullish(),
         customLeaveDesc: z.string().nullable().nullish(),
       })
@@ -227,7 +221,7 @@ export const leaveManagement = createTRPCRouter({
             },
           }),
         ])
-        .then((employeeData) => {
+        .then( async (employeeData) => {
           if (
             employeeData[0]?.name &&
             employeeData[1]?.name &&
@@ -238,7 +232,7 @@ export const leaveManagement = createTRPCRouter({
             employeeData[3]?.leave_type &&
             leaveRequest.start_date
           ) {
-            handleSendMail({
+            await handleSendMail({
               from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[0]?.email,
               subject: `Leave request by ${employeeData[0].name}`,
@@ -250,8 +244,8 @@ export const leaveManagement = createTRPCRouter({
                 startDate: leaveRequest.start_date,
                 subject: employeeData[3]?.leave_type,
               },
-            }).catch((e) => console.error(e));
-            handleSendMail({
+            });
+            await handleSendMail({
               from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[1]?.email,
               subject: `Leave request by ${employeeData[0].name}`,
@@ -263,8 +257,8 @@ export const leaveManagement = createTRPCRouter({
                 startDate: leaveRequest.start_date,
                 subject: employeeData[3]?.leave_type,
               },
-            }).catch((e) => console.error(e));
-            handleSendMail({
+            });
+            await handleSendMail({
               from: "Technisoft HRMS <technisofts@gmail.com>",
               to: employeeData[2]?.email,
               subject: `Leave request by ${employeeData[0].name}`,
@@ -276,17 +270,17 @@ export const leaveManagement = createTRPCRouter({
                 startDate: leaveRequest.start_date,
                 subject: employeeData[3]?.leave_type,
               },
-            }).catch((e) => console.error(e));
+            });
           } else {
             console.log({
               Error: "Some data is missinmg",
               employee: employeeData[0],
               headOffice: employeeData[1],
-              workAssign: employeeData[2],
+              workAssign: employeeData[3],
             });
           }
         });
-      return leaveRequest;
+        return leaveRequest;
     }),
   approveLeaveRequest: adminProcedure
     .input(z.object({ leaveRequestId: z.string() }))
@@ -314,7 +308,7 @@ export const leaveManagement = createTRPCRouter({
               },
             })
             .then(async () => {
-              return await ctx.prisma.leaveRequests.delete({
+             return await ctx.prisma.leaveRequests.delete({
                 where: { id: input.leaveRequestId },
               });
             });

@@ -1,11 +1,10 @@
-import { Listbox } from "@headlessui/react";
-import { Employee, User, type LeaveType } from "@prisma/client";
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { Listbox, Transition } from "@headlessui/react";
+import type { Employee, User, LeaveType } from "@prisma/client";
 import { type Dispatch, type SetStateAction, type FormEvent } from "react";
 import Loader from "../../common/Loader";
 import ModalContainer from "../../common/Modal/ModalContainer";
-import {
-  dateYesterday,
-} from "~/assets/constants";
+import { dateYesterday } from "~/assets/constants";
 
 type Props = {
   handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
@@ -104,11 +103,14 @@ const LeaveRequestForm = ({
                   setStartDate(e.currentTarget.value);
                   calculateLeaveEndDate();
                 }}
-                className="z-10 my-1 w-full cursor-pointer rounded-sm bg-slate-300 p-2 text-center backdrop-blur-md dark:bg-slate-700"
+                className="my-1 w-full cursor-pointer rounded-sm bg-slate-200 p-2 text-center backdrop-blur-md dark:bg-slate-600"
               />
             </div>
+
             <div className="relative w-full py-2">
-              <label htmlFor="head-office-approver">Select Manager</label>
+              <label htmlFor="head-office-approver">
+                Select head office approver
+              </label>
               <Listbox
                 value={headOfficeApprover}
                 onChange={setHeadOfficeApprover}
@@ -117,34 +119,47 @@ const LeaveRequestForm = ({
                 <Listbox.Button className="z-10 w-full rounded-sm bg-slate-300 p-2 dark:bg-slate-700">
                   {headOfficeApprover?.name}
                 </Listbox.Button>
-                <Listbox.Options className="z-20 max-h-[10rem] w-full overflow-y-scroll backdrop-blur-md scrollbar-thin">
-                  {headOfficeApprovers?.map((manager) => (
-                    <Listbox.Option
-                      key={manager.id}
-                      value={manager}
-                      className="z-30 my-1 w-full cursor-pointer rounded-sm bg-slate-200 p-2 text-center backdrop-blur-md dark:bg-slate-600"
-                    >
-                      {manager.name}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
+                <Transition
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform scale-95 opacity-0"
+                  enterTo="transform scale-100 opacity-100"
+                  leave="transition duration-75 ease-out"
+                  leaveFrom="transform scale-100 opacity-100"
+                  leaveTo="transform scale-95 opacity-0"
+                >
+                  <Listbox.Options className="max-h-48 w-full overflow-y-scroll backdrop-blur-md scrollbar-thin">
+                    {headOfficeApprovers?.map((admin) => (
+                      <Listbox.Option
+                        key={admin.id}
+                        value={admin}
+                        className="z-10 my-1 w-full cursor-pointer rounded-sm bg-slate-200 p-2 text-center backdrop-blur-md dark:bg-slate-600"
+                      >
+                        {admin.name}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
               </Listbox>
             </div>
-
             <div className="relative w-full py-2">
-              <label htmlFor="work-assignment">Select Work Handover</label>
+              <label htmlFor="work-assignment">Select work assignment</label>
               <Listbox
                 value={workAssignment}
                 onChange={setWorkAssignment}
                 name="work-assignment"
               >
                 <Listbox.Button className="z-10 w-full rounded-sm bg-slate-300 p-2 dark:bg-slate-700">
-                  {/* {workAssignment?.name} */}
-                  <span className="block truncate">{workAssignment?.name}</span>
-                  <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2" />
+                  {workAssignment?.name}
                 </Listbox.Button>
-                <div className="h-fit w-full">
-                  <Listbox.Options className="z-10 max-h-[10rem] w-full overflow-y-scroll backdrop-blur-md scrollbar-thin">
+                <Transition
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform scale-95 opacity-0"
+                  enterTo="transform scale-100 opacity-100"
+                  leave="transition duration-75 ease-out"
+                  leaveFrom="transform scale-100 opacity-100"
+                  leaveTo="transform scale-95 opacity-0"
+                >
+                  <Listbox.Options className="max-h-48 w-full overflow-y-scroll backdrop-blur-md scrollbar-thin">
                     {workAssignments?.map((employee) => (
                       <Listbox.Option
                         key={employee.id}
@@ -155,10 +170,9 @@ const LeaveRequestForm = ({
                       </Listbox.Option>
                     ))}
                   </Listbox.Options>
-                </div>
+                </Transition>
               </Listbox>
             </div>
-
             <div className="relative w-full py-2">
               <label htmlFor="leave-types" className="my-4 self-start">
                 Type of leave
@@ -174,29 +188,38 @@ const LeaveRequestForm = ({
                 <Listbox.Button className="w-full rounded-sm bg-slate-300 p-2 dark:bg-slate-700">
                   {leaveType?.leave_type}
                 </Listbox.Button>
-                <Listbox.Options className="z-10 max-h-[10rem] w-full overflow-y-scroll backdrop-blur-md scrollbar-thin">
-                  {leaveTypes.map((leave) => (
+                <Transition
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform scale-95 opacity-0"
+                  enterTo="transform scale-100 opacity-100"
+                  leave="transition duration-75 ease-out"
+                  leaveFrom="transform scale-100 opacity-100"
+                  leaveTo="transform scale-95 opacity-0"
+                >
+                  <Listbox.Options className="max-h-48 w-full overflow-y-scroll backdrop-blur-md scrollbar-thin">
+                    {leaveTypes.map((leave) => (
+                      <Listbox.Option
+                        key={leave.id}
+                        value={leave}
+                        className="z-10 my-1 w-full cursor-pointer rounded-sm bg-slate-200 p-2 text-center backdrop-blur-md dark:bg-slate-600"
+                      >
+                        {leave.leave_type}
+                      </Listbox.Option>
+                    ))}
                     <Listbox.Option
-                      key={leave.id}
-                      value={leave}
+                      value={
+                        {
+                          leave_type: customLeaveType,
+                          leave_desc: customLeaveDesc,
+                          leave_days: customLeaveDays,
+                        } as LeaveType
+                      }
                       className="z-10 my-1 w-full cursor-pointer rounded-sm bg-slate-200 p-2 text-center backdrop-blur-md dark:bg-slate-600"
                     >
-                      {leave.leave_type}
+                      Custom
                     </Listbox.Option>
-                  ))}
-                  <Listbox.Option
-                    value={
-                      {
-                        leave_type: customLeaveType,
-                        leave_desc: customLeaveDesc,
-                        leave_days: customLeaveDays,
-                      } as LeaveType
-                    }
-                    className="z-10 my-1 w-full cursor-pointer rounded-sm bg-slate-200 p-2 text-center backdrop-blur-md dark:bg-slate-600"
-                  >
-                    Custom
-                  </Listbox.Option>
-                </Listbox.Options>
+                  </Listbox.Options>
+                </Transition>
               </Listbox>
             </div>
             {isCustom ? (

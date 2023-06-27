@@ -20,7 +20,6 @@ const SidebarContainer = ({
 
     setIsDarkTheme(theme);
     localStorage.setItem("darkTheme", theme.toString());
-    console.log(isDarkTheme.toString())
   };
 
   return (

@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import type { Employee, LeaveRequests, LeaveType, User } from "@prisma/client";
-import { useSession } from "next-auth/react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import React from "react";
-import { ApplicationLinks } from "../../assets/constants";
-import img from "../../assets/images/blank-profile-picture.jpg";
+import { ApplicationLinks } from "~/assets/constants";
+import img from "../../assets/images/blank-profile-picture.jpg"
 import { trpc } from "../../utils/trpc";
 import Loader from "./Loader";
 
@@ -27,19 +28,18 @@ const ListItemCard = ({
   title = "table header",
   btn_lbl = "details",
 }: ListCardProps) => {
-  const { data: session } = useSession();
   const { data: leaveRequests, isLoading } =
     trpc.leaveManagement.getLeaveRequests.useQuery();
 
   if (isLoading) {
     return (
-      <div className="my-4 flex h-fit min-h-max w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-sm bg-slate-300 p-4 shadow-md  dark:bg-slate-600">
+      <div className="my-4 flex h-fit min-h-max w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-lg bg-slate-300 p-4 shadow-md  dark:bg-slate-600">
         <Loader />
       </div>
     );
   }
   return (
-    <div className="my-4 flex h-fit min-h-max w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-sm bg-slate-300 p-4 shadow-md  dark:bg-slate-600">
+    <div className="my-4 flex h-fit min-h-max w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-lg bg-slate-300 p-4 shadow-md  dark:bg-slate-600">
       <table className="my-2 flex h-full w-full flex-col">
         <thead className="text-center text-2xl">
           <tr>
@@ -68,7 +68,7 @@ const ListItemCard = ({
         </tbody>
       </table>
       {ApplicationLinks[1] ? (
-        <Link href={ApplicationLinks[1]?.link} className="self-end p-2 ">
+        <Link href={ApplicationLinks[1].link} className="self-end p-2 ">
           {btn_lbl}
         </Link>
       ) : (
@@ -98,22 +98,22 @@ const ListItem = ({
   column4 = "column4",
 }: ListItemProps) => {
   return (
-    <tr className="my-2 flex h-12 w-full min-w-fit flex-nowrap items-center rounded-sm bg-slate-100 p-2 text-slate-600 dark:bg-slate-500 dark:text-slate-50">
+    <tr className="my-2 flex flex-nowrap h-12 w-full min-w-fit items-center rounded-md bg-slate-100 dark:bg-slate-500 text-slate-600 dark:text-slate-50 p-2">
       <td className="p-2">
-        <div className="h-8 w-8 overflow-hidden rounded-full bg-slate-300">
+        <div className="h-8 w-8 rounded-full bg-slate-300 overflow-hidden">
           <Image src={image || img} width={48} height={48} alt="image" />
         </div>
       </td>
-      <td className="w-1/5 min-w-[8rem] p-2">
+      <td className="p-2 w-1/5 min-w-[8rem]">
         <p>{column1}</p>
       </td>
-      <td className="w-1/5 min-w-[8rem] p-2">
+      <td className="p-2 w-1/5 min-w-[8rem]">
         <p>{column2}</p>
       </td>
-      <td className="w-1/5 min-w-[8rem] p-2">
+      <td className="p-2 w-1/5 min-w-[8rem]">
         <p>{column3}</p>
       </td>
-      <td className="w-1/5 min-w-[8rem] p-2">
+      <td className="p-2 w-1/5 min-w-[8rem]">
         <p>{column4}</p>
       </td>
     </tr>

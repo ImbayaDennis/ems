@@ -115,7 +115,7 @@ const LeaveRequestManager = () => {
         </thead>
       </table>
 
-      <div className="my-8 overflow-hidden overflow-x-scroll rounded-sm bg-slate-300/60 p-4 backdrop-blur-md dark:bg-slate-600/60">
+      <div className="my-8 rounded-sm bg-slate-300/60 p-4 backdrop-blur-md dark:bg-slate-600/60 overflow-hidden overflow-x-scroll">
         <table className="mb-4 w-full">
           <thead>
             <tr>
@@ -123,7 +123,7 @@ const LeaveRequestManager = () => {
                 <p className="my-8 text-2xl">Leave Requests</p>
               </td>
             </tr>
-            <tr className="my-2 flex h-12 w-full items-center justify-evenly overflow-hidden rounded-md bg-slate-200 p-2 text-slate-700 dark:bg-slate-700 dark:text-slate-50">
+            <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-200 p-2 text-slate-700 dark:bg-slate-700 dark:text-slate-50 overflow-hidden">
               <td className="p-2">
                 <div className="h-8 w-8"></div>
               </td>
@@ -156,7 +156,7 @@ const LeaveRequestManager = () => {
         </table>
       </div>
 
-      <div className="my-8 overflow-hidden overflow-x-scroll rounded-sm bg-slate-300/60 p-4 backdrop-blur-md dark:bg-slate-600/60">
+      <div className="my-8 rounded-sm bg-slate-300/60 p-4 backdrop-blur-md dark:bg-slate-600/60 overflow-hidden overflow-x-scroll">
         <table className="mb-8 w-full">
           <thead className="w-full">
             <tr>
@@ -164,16 +164,14 @@ const LeaveRequestManager = () => {
                 <p className="my-8 text-2xl">Employees on leave</p>
               </td>
             </tr>
-            <tr className="my-2 flex h-12 w-full items-center justify-evenly overflow-hidden rounded-md bg-slate-200 p-2 text-slate-700 dark:bg-slate-700 dark:text-slate-50">
+            <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-200 p-2 text-slate-700 dark:bg-slate-700 dark:text-slate-50 overflow-hidden">
               <td className="p-2">
                 <div className="h-8 w-8"></div>
               </td>
               <td className="w-36 p-2">Employee name</td>
               <td className="w-36 p-2">Leave type</td>
               <td className="w-36 p-2">Start date</td>
-              <td className="w-36 overflow-hidden whitespace-nowrap p-2">
-                Expected end date
-              </td>
+              <td className="w-36 whitespace-nowrap p-2 overflow-hidden">Expected end date</td>
               <td className="w-36 p-2">
                 <p className="text-center">Return</p>
               </td>
@@ -200,7 +198,7 @@ const LeaveRequestManager = () => {
         </table>
       </div>
 
-      <div className="my-8 overflow-hidden overflow-x-scroll rounded-sm bg-slate-300/60 p-4 backdrop-blur-md dark:bg-slate-600/60">
+      <div className="my-8 rounded-sm bg-slate-300/60 p-4 backdrop-blur-md dark:bg-slate-600/60 overflow-hidden overflow-x-scroll">
         <table className="mb-8 w-full">
           <thead className="w-full">
             <tr>
@@ -208,16 +206,14 @@ const LeaveRequestManager = () => {
                 <p className="my-8 text-2xl">Leaves taken</p>
               </td>
             </tr>
-            <tr className="my-2 flex h-12 w-full items-center justify-evenly overflow-hidden rounded-md bg-slate-200 p-2 text-slate-700 dark:bg-slate-700 dark:text-slate-50">
+            <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-200 p-2 text-slate-700 dark:bg-slate-700 dark:text-slate-50 overflow-hidden">
               <td className="p-2">
                 <div className="h-8 w-8"></div>
               </td>
               <td className="w-36 p-2">Employee name</td>
               <td className="w-36 p-2">Leave type</td>
               <td className="w-36 p-2">Start date</td>
-              <td className="w-36 overflow-hidden whitespace-nowrap p-2">
-                Expected end date
-              </td>
+              <td className="w-36 whitespace-nowrap p-2 overflow-hidden">Expected end date</td>
               <td className="w-36 p-2">Return date</td>
             </tr>
           </thead>
@@ -251,7 +247,7 @@ const LeaveRequestManager = () => {
       />
       <button
         onClick={openAddLeaveTypeModal}
-        className="btn-1 fixed bottom-8 left-1/2 w-1/3 -translate-x-1/2 bg-slate-600/40 backdrop-blur-md dark:bg-slate-400/40"
+        className="btn-1 fixed bottom-8 left-1/2 w-1/3 -translate-x-1/2 bg-slate-600/40 dark:bg-slate-400/40 backdrop-blur-md"
       >
         Add Leave Type
       </button>
@@ -290,7 +286,7 @@ const RequestListItem = ({
 }: RequestsListItemProps) => {
   const { data: leaveRequest } = api.leaveManagement.getLeaveRequest.useQuery();
   return (
-    <tr className="my-2 flex h-12 w-full items-center justify-evenly overflow-hidden rounded-md bg-slate-300/60 p-2 text-slate-600 backdrop-blur-md dark:bg-slate-500/60 dark:text-slate-50">
+    <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-300/60 p-2 text-slate-600 backdrop-blur-md dark:bg-slate-500/60 dark:text-slate-50 overflow-hidden">
       <td className="p-2">
         <div className="h-8 w-8 overflow-hidden rounded-full bg-slate-300">
           <Image src={image} width={48} height={48} alt="profile-img" />
@@ -360,7 +356,7 @@ const ApprovedListItem = ({
   const { data: leaveRequest } =
     api.leaveManagement.getLeaveApproved.useQuery();
   return (
-    <tr className="my-2 flex h-12 w-full items-center justify-evenly overflow-hidden rounded-md bg-slate-300/60 p-2 text-slate-600 backdrop-blur-md dark:bg-slate-500/60 dark:text-slate-50">
+    <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-300/60 p-2 text-slate-600 backdrop-blur-md dark:bg-slate-500/60 dark:text-slate-50 overflow-hidden">
       <td className="p-2">
         <div className="h-8 w-8 overflow-hidden rounded-full bg-slate-300">
           <Image src={image} width={48} height={48} alt="profile-img" />
@@ -413,9 +409,13 @@ const TakenListItem = ({
   column3 = "column3",
   column4 = "column4",
   column5 = "column5",
+  request_id,
+  openLeaveReturnForm,
 }: TakenListItemProps) => {
+  const { data: leaveRequest } =
+    api.leaveManagement.getLeaveApproved.useQuery();
   return (
-    <tr className="my-2 flex h-12 w-full items-center justify-evenly overflow-hidden rounded-md bg-slate-300/60 p-2 text-slate-600 backdrop-blur-md dark:bg-slate-500/60 dark:text-slate-50">
+    <tr className="my-2 flex h-12 w-full items-center justify-evenly rounded-md bg-slate-300/60 p-2 text-slate-600 backdrop-blur-md dark:bg-slate-500/60 dark:text-slate-50 overflow-hidden">
       <td className="p-2">
         <div className="h-8 w-8 overflow-hidden rounded-full bg-slate-300">
           <Image src={image} width={48} height={48} alt="profile-img" />

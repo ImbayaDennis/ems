@@ -1,5 +1,4 @@
-import { Employee, LeaveType, User } from "@prisma/client";
-import moment from "moment";
+import type { Employee, LeaveType, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import {
   type FormEvent,
@@ -12,6 +11,7 @@ import { ModalContextProvider } from "../../../contexts/ModalsContext";
 import { api } from "../../../utils/api";
 import EmployeeLeaveRequestForm from "./EmployeeLeaveRequestForm";
 import { toast } from "react-toastify";
+import moment from 'moment';
 
 type Props = {
   employeeId: string | null | undefined;
@@ -19,10 +19,7 @@ type Props = {
   refetchLeaveRequests: () => void;
 };
 
-const EmployeeLeaveRequestFormContainer = ({
-  refetchLeaveRequests,
-  employeeId,
-}: Props) => {
+const EmployeeLeaveRequestFormContainer = ({ refetchLeaveRequests, employeeId }: Props) => {
   const { data: session } = useSession();
 
   const leaveRequest = api.leaveManagement.requestEmployeeLeave.useMutation();
@@ -31,9 +28,6 @@ const EmployeeLeaveRequestFormContainer = ({
   const { setModals } = useContext(ModalContextProvider);
 
   const admins = employees?.filter((admin) => admin.user?.role === "admin");
-  const managers = employees?.filter(
-    (manager) => manager.user?.role === "manager"
-  );
 
   const [startDate, setStartDate] = useState<string>(
     new Date(Date.now()).toISOString().substring(0, 10)
@@ -45,7 +39,6 @@ const EmployeeLeaveRequestFormContainer = ({
   const [customLeaveDesc, setCustomLeaveDesc] = useState("");
   const [customLeaveDays, setCustomLeaveDays] = useState(0);
   const [isCustom, setIsCustom] = useState(false);
-
   const [headOfficeApprover, setHeadOfficeApprover] = useState<
     Employee & {
       user: User | null;
@@ -57,7 +50,7 @@ const EmployeeLeaveRequestFormContainer = ({
     }
   >();
 
-  const calculateLeaveEndDate = () => {
+  const calculateLeaveEndDate = useCallback(() => {
     if (!isCustom) {
       leaveType &&
         setEndDate(
@@ -71,43 +64,33 @@ const EmployeeLeaveRequestFormContainer = ({
           moment(startDate).add(customLeaveDays, "days").format("YYYY-MM-DD")
         );
     }
-  };
+  }, [customLeaveDays, isCustom, leaveType, startDate]);
 
-  const callback = useCallback(calculateLeaveEndDate, [
-    startDate,
-    leaveType?.leave_days,
-    customLeaveDays,
-  ]);
+  const callback = useCallback(calculateLeaveEndDate, [calculateLeaveEndDate]);
 
   useEffect(() => {
     if (!leaveType) {
       setLeaveType(leaveTypes?.at(0));
     }
     setIsCustom(leaveType?.leave_type === "Custom");
-    setHeadOfficeApprover(managers?.at(0));
-    setWorkAssignment(employees?.at(0));
+    setHeadOfficeApprover(admins?.at(0));
+    setWorkAssignment(employees?.at(0))
     calculateLeaveEndDate();
-  }, [leaveTypes, callback]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [callback, leaveTypes]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     calculateLeaveEndDate();
-    if (
-      isCustom &&
-      session?.user &&
-      startDate &&
-      endDate &&
-      leaveType &&
-      employeeId
-    ) {
+    if (isCustom && session?.user && startDate && endDate && leaveType && employeeId) {
       leaveRequest
         .mutateAsync({
           employee_id: employeeId,
           leaveDays: customLeaveDays,
           startDate,
           endDate,
-          head_office_approver_id: headOfficeApprover?.id,
-          work_assign_id: workAssignment?.id,
+          head_office_approver_id: headOfficeApprover?.id || "",
+          work_assign_id: workAssignment?.id || "",
           customLeaveType,
           customLeaveDesc,
         })
@@ -119,26 +102,20 @@ const EmployeeLeaveRequestFormContainer = ({
               }))
             : null;
           refetchLeaveRequests();
-          toast.success("Employee leave requested successfully");
+          toast.success("Employee leave requested successfully")
         })
         .catch((e) => {
           console.error(e);
           toast.error("Error requesting employee leave");
         });
-    } else if (
-      session?.user &&
-      startDate &&
-      endDate &&
-      leaveType &&
-      employeeId
-    ) {
+    } else if (session?.user && startDate && endDate && leaveType && employeeId) {
       leaveRequest
         .mutateAsync({
           employee_id: employeeId,
           leaveTypeId: leaveType.id,
           leaveDays: leaveType.leave_days,
-          head_office_approver_id: headOfficeApprover?.id,
-          work_assign_id: workAssignment?.id,
+          head_office_approver_id: headOfficeApprover?.id || "",
+          work_assign_id: workAssignment?.id || "" ,
           startDate,
           endDate,
         })

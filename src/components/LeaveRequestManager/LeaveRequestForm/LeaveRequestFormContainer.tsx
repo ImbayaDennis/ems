@@ -1,4 +1,4 @@
-import { Employee, LeaveType, User } from "@prisma/client";
+import type { Employee, LeaveType, User } from "@prisma/client";
 import moment from "moment";
 import { useSession } from "next-auth/react";
 import {
@@ -26,9 +26,6 @@ const LeaveRequestFormContainer = ({ refetchLeaveRequests }: Props) => {
   const { setModals } = useContext(ModalContextProvider);
 
   const admins = employees?.filter((admin) => admin.user?.role === "admin");
-  const managers = employees?.filter(
-    (manager) => manager.user?.role === "manager"
-  );
 
   const [startDate, setStartDate] = useState<string>(
     new Date(Date.now()).toISOString().substring(0, 10)
@@ -51,7 +48,7 @@ const LeaveRequestFormContainer = ({ refetchLeaveRequests }: Props) => {
     }
   >();
 
-  const calculateLeaveEndDate = () => {
+  const calculateLeaveEndDate = useCallback(() => {
     if (!isCustom) {
       leaveType &&
         setEndDate(
@@ -65,22 +62,19 @@ const LeaveRequestFormContainer = ({ refetchLeaveRequests }: Props) => {
           moment(startDate).add(customLeaveDays, "days").format("YYYY-MM-DD")
         );
     }
-  };
+  },[customLeaveDays, isCustom, leaveType, startDate]);
 
-  const callback = useCallback(calculateLeaveEndDate, [
-    startDate,
-    leaveType?.leave_days,
-    customLeaveDays,
-  ]);
+  const callback = useCallback(calculateLeaveEndDate, [calculateLeaveEndDate]);
 
   useEffect(() => {
     if (!leaveType) {
       setLeaveType(leaveTypes?.at(0));
     }
     setIsCustom(leaveType?.leave_type === "Custom");
-    setHeadOfficeApprover(managers?.at(0));
+    setHeadOfficeApprover(admins?.at(0));
     setWorkAssignment(employees?.at(0));
     calculateLeaveEndDate();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leaveTypes, callback]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -92,8 +86,8 @@ const LeaveRequestFormContainer = ({ refetchLeaveRequests }: Props) => {
           leaveDays: customLeaveDays,
           startDate,
           endDate,
-          head_office_approver_id: headOfficeApprover?.id || "",
-          work_assign_id: workAssignment?.id || "",
+          head_office_approver_id: headOfficeApprover?.id,
+          work_assign_id: workAssignment?.id,
           customLeaveType,
           customLeaveDesc,
         })
@@ -115,11 +109,11 @@ const LeaveRequestFormContainer = ({ refetchLeaveRequests }: Props) => {
       leaveRequest
         .mutateAsync({
           leaveTypeId: leaveType.id,
-          leaveDays: leaveType.leave_days || 0,
+          leaveDays: leaveType.leave_days,
           startDate,
           endDate,
-          head_office_approver_id: headOfficeApprover?.employee_id || "",
-          work_assign_id: workAssignment?.employee_id || "",
+          head_office_approver_id: headOfficeApprover?.employee_id,
+          work_assign_id: workAssignment?.employee_id,
         })
         .then(() => {
           setModals

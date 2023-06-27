@@ -1,6 +1,6 @@
 import moment from "moment";
 import { useSession } from "next-auth/react";
-import { FormEvent, useState, useContext } from "react";
+import { type FormEvent, useState, useContext } from "react";
 import { ModalContextProvider } from "../../../contexts/ModalsContext";
 import { api } from "../../../utils/api";
 import AddEmployeePresentation from "./AddEmployeePresentation";
@@ -10,7 +10,7 @@ type AddEmployeeProps = {
   refetchEmployees: () => void
 }
 const AddEmployeeContainer = ({refetchEmployees}:AddEmployeeProps) => {
-  const { mutateAsync: addEmployee, isLoading, isSuccess } =
+  const { mutateAsync: addEmployee, isLoading } =
     api.employees.addEmployee.useMutation();
   const { data: session } = useSession();
   const { setModals } = useContext(ModalContextProvider);

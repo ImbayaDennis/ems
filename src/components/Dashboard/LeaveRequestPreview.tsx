@@ -2,14 +2,12 @@ import type {
   Employee,
   LeaveRequests,
   LeaveType,
-  Log,
   User,
 } from "@prisma/client";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import React from "react";
 import img from "../../assets/images/blank-profile-picture.jpg";
-import { api } from "../../utils/api";
 import Loader from "../common/Loader";
 
 type ListCardProps = {
@@ -36,7 +34,7 @@ const LeaveRequestPreview = ({
   leave_requests_loading,
 }: ListCardProps) => {
   return (
-    <div className="my-4 flex h-fit min-h-max w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-sm bg-slate-300/40 p-4 shadow-md  backdrop-blur-md dark:bg-slate-600/40">
+    <div className="my-4 flex h-fit min-h-max w-full min-w-[24rem] max-w-2xl flex-col items-center justify-center rounded-lg bg-slate-300/40 p-4 shadow-md  backdrop-blur-md dark:bg-slate-600/40">
       <table className="my-2 flex h-full w-full flex-col">
         <thead className="text-center text-2xl">
           <tr>
@@ -100,7 +98,7 @@ const ListItem = ({
   column4 = "column4",
 }: ListItemProps) => {
   return (
-    <tr className="my-2 flex h-12 w-full min-w-fit flex-nowrap items-center rounded-sm bg-slate-100 p-2 text-slate-600 dark:bg-slate-500 dark:text-slate-50">
+    <tr className="my-2 flex h-12 w-full min-w-fit flex-nowrap items-center rounded-md bg-slate-100 p-2 text-slate-600 dark:bg-slate-500 dark:text-slate-50">
       <td className="p-2">
         <div className="h-8 w-8 overflow-hidden rounded-full bg-slate-300">
           <Image src={image || img} width={48} height={48} alt="image" />

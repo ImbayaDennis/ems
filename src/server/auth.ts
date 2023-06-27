@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
@@ -19,7 +24,7 @@ declare module "next-auth" {
   type UserRole = "owner" | "admin" | "manager" | "employee"
 
   interface Session extends DefaultSession {
-    user?: {
+    user: {
       employee_id: string;
       org_id: string;
       id: string;
@@ -30,6 +35,7 @@ declare module "next-auth" {
   interface User {
     employee_id: string;
     org_id: string;
+    id: string;
     role: UserRole;
   }
 }
@@ -46,12 +52,10 @@ export const authOptions: NextAuthOptions = {
         const checkEmployeeEmail = await prisma.employee.findUnique({
           where: { email: user.email },
         });
-
-        if (!!checkEmployeeEmail) {
-          return true;
-        }
+        console.log(!!checkEmployeeEmail)
+        return !!checkEmployeeEmail
       }
-      return false;
+      return false
     },
     async session({ session, user }) {
       if (!user.role) {

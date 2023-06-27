@@ -1,4 +1,4 @@
-import { useContext, ReactNode, useEffect } from "react";
+import { useContext, type ReactNode, useEffect, useCallback } from "react";
 import { ModalContextProvider } from "../../../contexts/ModalsContext";
 import Modal from "./Modal";
 
@@ -10,7 +10,8 @@ type Props = {
 const ModalContainer = ({ children, modal }: Props) => {
   const modalContext = useContext(ModalContextProvider);
 
-  const closeModal = () => {
+  
+  const closeModal = useCallback(() => {
     if (modalContext.setModals) {
       modalContext.setModals((prev) => ({
         ...prev,
@@ -22,7 +23,15 @@ const ModalContainer = ({ children, modal }: Props) => {
         returnFromLeave: { isOpen: false },
       }));
     }
-  };
+  },[modalContext]);
+  useEffect(() => {
+    window.addEventListener("keydown", (key)=>{
+      if (key.code === "Escape") {
+        closeModal();
+      }
+    });
+
+  }, [closeModal]);
 
   if (modalContext?.modals && modalContext?.modals[modal].isOpen) {
     return <Modal closeModal={closeModal}>{children}</Modal>;
