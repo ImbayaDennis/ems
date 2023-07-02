@@ -79,6 +79,7 @@ const mailHtmlBuilder: (rawHtml: {
 };
 
 export const transporter = nodemailer.createTransport({
+  pool: true,
   host: "smtp.gmail.com",
   port: 465,
   secure: true,

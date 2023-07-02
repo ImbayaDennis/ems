@@ -10,9 +10,13 @@
     div{
         @apply scrollbar-thin
     }
+
+    input{
+        @apply outline-0 border-0
+    }
     
     body {
-        @apply bg-main-texture bg-cover bg-blend-overlay
+        @apply bg-main-texture bg-cover bg-blend-overlay scrollbar-thin
     }
     .btn-1 {
         @apply p-2 h-10 flex items-center justify-center text-sm min-w-fit max-w-sm mx-2 rounded-md text-gray-800 dark:text-gray-200 transition-colors
