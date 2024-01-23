@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
         console.log(!!checkEmployeeEmail)
         return !!checkEmployeeEmail
       }
-      return false
+      return true
     },
     async session({ session, user }) {
       if (!user.role) {
